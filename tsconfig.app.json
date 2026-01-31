@@ -39,6 +39,9 @@
       "@entities/*": [
         "./src/components/common/entities/*"
       ],
+      "@pages/*": [
+        "./src/pages/*"
+      ],
     }
   },
   "include": [
