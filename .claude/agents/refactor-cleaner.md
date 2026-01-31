@@ -20,12 +20,14 @@ model: opus
 ## 사용 가능한 도구
 
 ### 감지 도구
+
 - **knip** - 사용되지 않는 파일, 익스포트, 의존성, 타입 찾기
 - **depcheck** - 사용되지 않는 npm 의존성 식별
 - **ts-prune** - 사용되지 않는 TypeScript 익스포트 찾기
 - **eslint** - 사용되지 않는 disable-directives와 변수 검사
 
 ### 분석 명령어
+
 ```bash
 # 사용되지 않는 익스포트/파일/의존성을 위한 knip 실행
 npx knip
@@ -43,6 +45,7 @@ npx eslint . --report-unused-disable-directives
 ## 리팩토링 워크플로우
 
 ### 1. 분석 단계
+
 ```
 a) 감지 도구를 병렬로 실행
 b) 모든 발견 수집
@@ -53,6 +56,7 @@ c) 위험 수준별 분류:
 ```
 
 ### 2. 위험 평가
+
 ```
 제거할 각 항목에 대해:
 - 어디선가 임포트되는지 검사 (grep 검색)
@@ -63,6 +67,7 @@ c) 위험 수준별 분류:
 ```
 
 ### 3. 안전한 제거 프로세스
+
 ```
 a) 안전 항목만 시작
 b) 한 번에 하나의 카테고리 제거:
@@ -75,6 +80,7 @@ d) 각 배치에 대해 git 커밋 생성
 ```
 
 ### 4. 중복 통합
+
 ```
 a) 중복 컴포넌트/유틸리티 찾기
 b) 최상의 구현 선택:
@@ -96,28 +102,34 @@ e) 테스트가 여전히 통과하는지 확인
 ## [YYYY-MM-DD] 리팩토링 세션
 
 ### 제거된 사용되지 않는 의존성
+
 - package-name@version - 마지막 사용: 없음, 크기: XX KB
 - another-package@version - 대체됨: better-package
 
 ### 삭제된 사용되지 않는 파일
+
 - src/old-component.tsx - 대체됨: src/new-component.tsx
 - lib/deprecated-util.ts - 기능 이동됨: lib/utils.ts
 
 ### 통합된 중복 코드
+
 - src/components/Button1.tsx + Button2.tsx → Button.tsx
 - 이유: 두 구현이 동일했음
 
 ### 제거된 사용되지 않는 익스포트
+
 - src/utils/helpers.ts - 함수: foo(), bar()
 - 이유: 코드베이스에서 참조 없음
 
 ### 영향
+
 - 삭제된 파일: 15
 - 제거된 의존성: 5
 - 제거된 코드 라인: 2,300
 - 번들 크기 감소: ~45 KB
 
 ### 테스팅
+
 - 모든 단위 테스트 통과: ✓
 - 모든 통합 테스트 통과: ✓
 - 수동 테스트 완료: ✓
@@ -126,6 +138,7 @@ e) 테스트가 여전히 통과하는지 확인
 ## 안전 체크리스트
 
 무엇이든 제거하기 전:
+
 - [ ] 감지 도구 실행
 - [ ] 모든 참조 grep
 - [ ] 동적 임포트 확인
@@ -136,6 +149,7 @@ e) 테스트가 여전히 통과하는지 확인
 - [ ] DELETION_LOG.md에 문서화
 
 각 제거 후:
+
 - [ ] 빌드 성공
 - [ ] 테스트 통과
 - [ ] 콘솔 오류 없음
@@ -145,20 +159,22 @@ e) 테스트가 여전히 통과하는지 확인
 ## 제거할 일반적인 패턴
 
 ### 1. 사용되지 않는 임포트
+
 ```typescript
 // ❌ 사용되지 않는 임포트 제거
-import { useState, useEffect, useMemo } from 'react' // useState만 사용됨
+import { useState, useEffect, useMemo } from "react"; // useState만 사용됨
 
 // ✅ 사용하는 것만 유지
-import { useState } from 'react'
+import { useState } from "react";
 ```
 
 ### 2. 죽은 코드 브랜치
+
 ```typescript
 // ❌ 도달할 수 없는 코드 제거
 if (false) {
   // 이것은 절대 실행되지 않음
-  doSomething()
+  doSomething();
 }
 
 // ❌ 사용되지 않는 함수 제거
@@ -168,6 +184,7 @@ export function unusedHelper() {
 ```
 
 ### 3. 중복 컴포넌트
+
 ```typescript
 // ❌ 여러 유사한 컴포넌트
 components/Button.tsx
@@ -179,12 +196,13 @@ components/Button.tsx (variant prop 포함)
 ```
 
 ### 4. 사용되지 않는 의존성
+
 ```json
 // ❌ 패키지 설치됐지만 임포트 안 됨
 {
   "dependencies": {
-    "lodash": "^4.17.21",  // 어디서도 사용 안 됨
-    "moment": "^2.29.4"     // date-fns로 대체됨
+    "lodash": "^4.17.21", // 어디서도 사용 안 됨
+    "moment": "^2.29.4" // date-fns로 대체됨
   }
 }
 ```
@@ -211,6 +229,7 @@ components/Button.tsx (variant prop 포함)
 ## 성공 지표
 
 정리 세션 후:
+
 - ✅ 모든 테스트 통과
 - ✅ 빌드 성공
 - ✅ 콘솔 오류 없음

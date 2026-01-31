@@ -5,7 +5,7 @@ disable-model-invocation: true
 
 # 계획 커맨드
 
-이 커맨드는 **planner** 에이전트를 호출하여 코드 작성 전에 포괄적인 구현 계획을 생성합니다.
+이 커맨드는 **planner** 에이전트를 호출하여 코드 작성 전에 포괄적인 구현 계획을 전달받습니다. 이를 바탕으로 `./context/statement.md`문서를 수정합니다.
 요구사항은 `./context/requirement.md` 문서를 참고합니다.
 요구사항을 분석해서 `./context/statement.md` 문서의 "## 요구사항 분석"에 작성합니다.
 작성한 요구사항 분석을 바탕으로 /requirement.md 문서의 구현 사항(TODO)와 주의사항을 작성합니다.
@@ -71,7 +71,8 @@ planner 에이전트가 수행하는 작업:
 
 ## 중요 참고사항
 
-**치명적**: planner 에이전트는 `./context/statment.md` 파일을 제외한 그 어떤 파일도 수정하지 **않습니다**.
+**치명적**: `./context/statment.md` 파일을 제외한 그 어떤 파일도 수정하지 **않아야합니다.**.
+**치명적**: `./.claude/agents/planner.md` 에이전트는 그 어떤 파일도 수정하지 않습니다. 수정은 직접 수행하세요.
 
 모호한 부분이 존재한다면 사용자에게 질문을 할 수 있습니다.
 
