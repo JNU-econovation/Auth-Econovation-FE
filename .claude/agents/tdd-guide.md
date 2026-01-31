@@ -18,47 +18,53 @@ model: opus
 ## TDD 워크플로우
 
 ### 1단계: 테스트 먼저 작성 (RED)
+
 ```typescript
 // 항상 실패하는 테스트로 시작
-describe('searchMarkets', () => {
-  it('의미적으로 유사한 마켓을 반환한다', async () => {
-    const results = await searchMarkets('election')
+describe("searchMarkets", () => {
+  it("의미적으로 유사한 마켓을 반환한다", async () => {
+    const results = await searchMarkets("election");
 
-    expect(results).toHaveLength(5)
-    expect(results[0].name).toContain('Trump')
-    expect(results[1].name).toContain('Biden')
-  })
-})
+    expect(results).toHaveLength(5);
+    expect(results[0].name).toContain("Trump");
+    expect(results[1].name).toContain("Biden");
+  });
+});
 ```
 
 ### 2단계: 테스트 실행 (실패 확인)
+
 ```bash
 npm test
 # 테스트가 실패해야 함 - 아직 구현하지 않았으므로
 ```
 
 ### 3단계: 최소한의 구현 작성 (GREEN)
+
 ```typescript
 export async function searchMarkets(query: string) {
-  const embedding = await generateEmbedding(query)
-  const results = await vectorSearch(embedding)
-  return results
+  const embedding = await generateEmbedding(query);
+  const results = await vectorSearch(embedding);
+  return results;
 }
 ```
 
 ### 4단계: 테스트 실행 (통과 확인)
+
 ```bash
 npm test
 # 이제 테스트가 통과해야 함
 ```
 
 ### 5단계: 리팩토링 (IMPROVE)
+
 - 중복 제거
 - 이름 개선
 - 성능 최적화
 - 가독성 향상
 
 ### 6단계: 커버리지 확인
+
 ```bash
 npm run test:coverage
 # 80%+ 커버리지 확인
@@ -67,129 +73,143 @@ npm run test:coverage
 ## 반드시 작성해야 하는 테스트 유형
 
 ### 1. 단위 테스트 (필수)
+
 개별 함수를 독립적으로 테스트:
 
 ```typescript
-import { calculateSimilarity } from './utils'
+import { calculateSimilarity } from "./utils";
 
-describe('calculateSimilarity', () => {
-  it('동일한 임베딩에 대해 1.0을 반환한다', () => {
-    const embedding = [0.1, 0.2, 0.3]
-    expect(calculateSimilarity(embedding, embedding)).toBe(1.0)
-  })
+describe("calculateSimilarity", () => {
+  it("동일한 임베딩에 대해 1.0을 반환한다", () => {
+    const embedding = [0.1, 0.2, 0.3];
+    expect(calculateSimilarity(embedding, embedding)).toBe(1.0);
+  });
 
-  it('직교 임베딩에 대해 0.0을 반환한다', () => {
-    const a = [1, 0, 0]
-    const b = [0, 1, 0]
-    expect(calculateSimilarity(a, b)).toBe(0.0)
-  })
+  it("직교 임베딩에 대해 0.0을 반환한다", () => {
+    const a = [1, 0, 0];
+    const b = [0, 1, 0];
+    expect(calculateSimilarity(a, b)).toBe(0.0);
+  });
 
-  it('null을 우아하게 처리한다', () => {
-    expect(() => calculateSimilarity(null, [])).toThrow()
-  })
-})
+  it("null을 우아하게 처리한다", () => {
+    expect(() => calculateSimilarity(null, [])).toThrow();
+  });
+});
 ```
 
 ### 2. 통합 테스트 (필수)
+
 API 엔드포인트와 데이터베이스 작업 테스트:
 
 ```typescript
-import { NextRequest } from 'next/server'
-import { GET } from './route'
+import { NextRequest } from "next/server";
+import { GET } from "./route";
 
-describe('GET /api/markets/search', () => {
-  it('유효한 결과와 함께 200을 반환한다', async () => {
-    const request = new NextRequest('http://localhost/api/markets/search?q=trump')
-    const response = await GET(request, {})
-    const data = await response.json()
+describe("GET /api/markets/search", () => {
+  it("유효한 결과와 함께 200을 반환한다", async () => {
+    const request = new NextRequest(
+      "http://localhost/api/markets/search?q=trump",
+    );
+    const response = await GET(request, {});
+    const data = await response.json();
 
-    expect(response.status).toBe(200)
-    expect(data.success).toBe(true)
-    expect(data.results.length).toBeGreaterThan(0)
-  })
+    expect(response.status).toBe(200);
+    expect(data.success).toBe(true);
+    expect(data.results.length).toBeGreaterThan(0);
+  });
 
-  it('쿼리 누락 시 400을 반환한다', async () => {
-    const request = new NextRequest('http://localhost/api/markets/search')
-    const response = await GET(request, {})
+  it("쿼리 누락 시 400을 반환한다", async () => {
+    const request = new NextRequest("http://localhost/api/markets/search");
+    const response = await GET(request, {});
 
-    expect(response.status).toBe(400)
-  })
+    expect(response.status).toBe(400);
+  });
 
-  it('Redis 사용 불가 시 서브스트링 검색으로 폴백한다', async () => {
+  it("Redis 사용 불가 시 서브스트링 검색으로 폴백한다", async () => {
     // Redis 실패 모킹
-    jest.spyOn(redis, 'searchMarketsByVector').mockRejectedValue(new Error('Redis down'))
+    jest
+      .spyOn(redis, "searchMarketsByVector")
+      .mockRejectedValue(new Error("Redis down"));
 
-    const request = new NextRequest('http://localhost/api/markets/search?q=test')
-    const response = await GET(request, {})
-    const data = await response.json()
+    const request = new NextRequest(
+      "http://localhost/api/markets/search?q=test",
+    );
+    const response = await GET(request, {});
+    const data = await response.json();
 
-    expect(response.status).toBe(200)
-    expect(data.fallback).toBe(true)
-  })
-})
+    expect(response.status).toBe(200);
+    expect(data.fallback).toBe(true);
+  });
+});
 ```
 
 ### 3. E2E 테스트 (중요 흐름용)
+
 Playwright로 완전한 사용자 여정 테스트:
 
 ```typescript
-import { test, expect } from '@playwright/test'
+import { test, expect } from "@playwright/test";
 
-test('사용자가 검색하고 마켓을 볼 수 있다', async ({ page }) => {
-  await page.goto('/')
+test("사용자가 검색하고 마켓을 볼 수 있다", async ({ page }) => {
+  await page.goto("/");
 
   // 마켓 검색
-  await page.fill('input[placeholder="Search markets"]', 'election')
-  await page.waitForTimeout(600) // 디바운스
+  await page.fill('input[placeholder="Search markets"]', "election");
+  await page.waitForTimeout(600); // 디바운스
 
   // 결과 확인
-  const results = page.locator('[data-testid="market-card"]')
-  await expect(results).toHaveCount(5, { timeout: 5000 })
+  const results = page.locator('[data-testid="market-card"]');
+  await expect(results).toHaveCount(5, { timeout: 5000 });
 
   // 첫 번째 결과 클릭
-  await results.first().click()
+  await results.first().click();
 
   // 마켓 페이지 로드 확인
-  await expect(page).toHaveURL(/\/markets\//)
-  await expect(page.locator('h1')).toBeVisible()
-})
+  await expect(page).toHaveURL(/\/markets\//);
+  await expect(page.locator("h1")).toBeVisible();
+});
 ```
 
 ## 외부 의존성 모킹
 
 ### Supabase 모킹
+
 ```typescript
-jest.mock('@/lib/supabase', () => ({
+jest.mock("@/lib/supabase", () => ({
   supabase: {
     from: jest.fn(() => ({
       select: jest.fn(() => ({
-        eq: jest.fn(() => Promise.resolve({
-          data: mockMarkets,
-          error: null
-        }))
-      }))
-    }))
-  }
-}))
+        eq: jest.fn(() =>
+          Promise.resolve({
+            data: mockMarkets,
+            error: null,
+          }),
+        ),
+      })),
+    })),
+  },
+}));
 ```
 
 ### Redis 모킹
+
 ```typescript
-jest.mock('@/lib/redis', () => ({
-  searchMarketsByVector: jest.fn(() => Promise.resolve([
-    { slug: 'test-1', similarity_score: 0.95 },
-    { slug: 'test-2', similarity_score: 0.90 }
-  ]))
-}))
+jest.mock("@/lib/redis", () => ({
+  searchMarketsByVector: jest.fn(() =>
+    Promise.resolve([
+      { slug: "test-1", similarity_score: 0.95 },
+      { slug: "test-2", similarity_score: 0.9 },
+    ]),
+  ),
+}));
 ```
 
 ### OpenAI 모킹
+
 ```typescript
-jest.mock('@/lib/openai', () => ({
-  generateEmbedding: jest.fn(() => Promise.resolve(
-    new Array(1536).fill(0.1)
-  ))
-}))
+jest.mock("@/lib/openai", () => ({
+  generateEmbedding: jest.fn(() => Promise.resolve(new Array(1536).fill(0.1))),
+}));
 ```
 
 ## 반드시 테스트해야 하는 엣지 케이스
@@ -221,31 +241,39 @@ jest.mock('@/lib/openai', () => ({
 ## 테스트 스멜 (안티 패턴)
 
 ### ❌ 구현 세부사항 테스트
+
 ```typescript
 // 내부 상태 테스트하지 마세요
-expect(component.state.count).toBe(5)
+expect(component.state.count).toBe(5);
 ```
 
 ### ✅ 사용자에게 보이는 동작 테스트
+
 ```typescript
 // 사용자가 보는 것을 테스트하세요
-expect(screen.getByText('Count: 5')).toBeInTheDocument()
+expect(screen.getByText("Count: 5")).toBeInTheDocument();
 ```
 
 ### ❌ 테스트가 서로 의존
+
 ```typescript
 // 이전 테스트에 의존하지 마세요
-test('사용자 생성', () => { /* ... */ })
-test('같은 사용자 업데이트', () => { /* 이전 테스트 필요 */ })
+test("사용자 생성", () => {
+  /* ... */
+});
+test("같은 사용자 업데이트", () => {
+  /* 이전 테스트 필요 */
+});
 ```
 
 ### ✅ 독립적인 테스트
+
 ```typescript
 // 각 테스트에서 데이터 설정
-test('사용자 업데이트', () => {
-  const user = createTestUser()
+test("사용자 업데이트", () => {
+  const user = createTestUser();
   // 테스트 로직
-})
+});
 ```
 
 ## 커버리지 리포트
@@ -259,6 +287,7 @@ open coverage/lcov-report/index.html
 ```
 
 필요한 임계값:
+
 - 브랜치: 80%
 - 함수: 80%
 - 라인: 80%
