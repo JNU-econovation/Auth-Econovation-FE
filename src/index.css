@@ -1,10 +1,29 @@
 /* Pretendard 폰트 CDN import */
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css');
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css");
 
 /* Tailwind CSS import */
 @import "tailwindcss";
 
 /* Tailwind 테마 설정: Pretendard를 기본 폰트로 */
 @theme {
-  --font-sans: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans:
+    "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont,
+    system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@theme {
+  --color-primary: #162d3a;
+  --color-secondary: #2d334a;
+
+  --color-info: #2d6eff;
+  --color-error: #ff0000;
+
+  --color-main-black: #0c1421;
+  --color-secondary-black: #2d334a;
+
+  --color-main-gray: #959cb6;
+
+  /* input */
+  --color-input-border-gray: #d4d7e3;
+  --color-input-bg-gray: #f7fbff;
 }
