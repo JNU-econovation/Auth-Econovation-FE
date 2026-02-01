@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router";
-import LoginPage from "@pages/LoginPage";
-import SignUpPage from "@pages/SignUpPage";
+import LoginPage from "@app/LoginPage";
+import SignUpPage from "@app/SignUpPage";
 
 function App() {
   return (
