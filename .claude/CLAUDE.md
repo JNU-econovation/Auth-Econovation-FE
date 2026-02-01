@@ -31,8 +31,10 @@ bun run lint
 
 - **Bun** - 패키지 매니저 및 런타임
 - **React 19** with TypeScript - UI 라이브러리
+- **React Router v7** - 클라이언트 측 라우팅
 - **Vite** - 빌드 도구 및 개발 서버
 - **SWC** - Fast Refresh (via @vitejs/plugin-react-swc)
+- **Tailwind CSS v4** - 유틸리티 기반 CSS 프레임워크 (via @tailwindcss/vite)
 - **ESLint** - 코드 품질 도구
 
 ## TypeScript Configuration
