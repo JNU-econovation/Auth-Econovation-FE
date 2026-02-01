@@ -27,9 +27,6 @@
       "@/*": [
         "./src/*"
       ],
-      "@components/*": [
-        "./src/components/*"
-      ],
       "@assets/*": [
         "./src/assets/*"
       ],
@@ -40,8 +37,14 @@
         "./src/components/common/entities/*"
       ],
       "@pages/*": [
-        "./src/pages/*"
+        "./src/components/feature/pages/*"
       ],
+      "@widget/*": [
+        "./src/components/feature/widget/*"
+      ],
+      "@app/*": [
+        "./src/app/*"
+      ]
     }
   },
   "include": [
