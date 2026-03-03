@@ -2,9 +2,18 @@ import Spacing from "@shared/layout/Spacing";
 import TextFieldLayout from "@shared/layout/TextFieldLayout";
 import DefaultButton from "@shared/ui/DefaultButton";
 import { ChangeEvent, useState } from "react";
+import { validateName } from "./validateName";
 
 function SignUpFormSection() {
+  const [name, setName] = useState("");
+  const [nameError, setNameError] = useState("");
   const [generation, setGeneration] = useState("");
+
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setName(value);
+    setNameError(validateName(value));
+  };
 
   const handleGenerationChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -29,6 +38,16 @@ function SignUpFormSection() {
 
   return (
     <section>
+      <TextFieldLayout
+        label="이름"
+        placeholder="이름을 입력해주세요."
+        type="text"
+        value={name}
+        onChange={handleNameChange}
+        helperText={nameError || undefined}
+        helperTextColor="error"
+      />
+      <Spacing size={24} direction="vertical" />
       <TextFieldLayout label="id" placeholder="아이디를 입력해주세요." />
       <Spacing size={24} direction="vertical" />
       <TextFieldLayout
