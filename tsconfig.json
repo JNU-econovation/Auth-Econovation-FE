@@ -3,5 +3,16 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@shared/*": ["./src/components/common/shared/*"],
+      "@entities/*": ["./src/components/common/entities/*"],
+      "@pages/*": ["./src/components/feature/pages/*"],
+      "@widget/*": ["./src/components/feature/widget/*"],
+      "@app/*": ["./src/app/*"]
+    }
+  }
 }
