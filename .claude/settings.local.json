@@ -3,7 +3,16 @@
     "allow": [
       "WebSearch",
       "Bash(bun run build)",
-      "Bash(bun install:*)"
+      "Bash(bun install:*)",
+      "Bash(bun add:*)",
+      "Bash(bun run:*)",
+      "Bash(bunx vitest:*)",
+      "Bash(npx vitest:*)",
+      "Bash(timeout 20 node_modules/.bin/vitest run:*)",
+      "Bash(node:*)",
+      "Bash(timeout 20 bun run:*)",
+      "Bash(timeout 5 /Users/baggeongyu/Documents/Coding/auth-econovation/node_modules/esbuild/bin/esbuild:*)",
+      "Bash(timeout 30 node:*)"
     ]
   }
 }
