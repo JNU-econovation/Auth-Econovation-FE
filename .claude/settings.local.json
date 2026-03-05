@@ -12,7 +12,9 @@
       "Bash(node:*)",
       "Bash(timeout 20 bun run:*)",
       "Bash(timeout 5 /Users/baggeongyu/Documents/Coding/auth-econovation/node_modules/esbuild/bin/esbuild:*)",
-      "Bash(timeout 30 node:*)"
+      "Bash(timeout 30 node:*)",
+      "Bash(bunx tsc:*)",
+      "Bash(bun test:*)"
     ]
   }
 }

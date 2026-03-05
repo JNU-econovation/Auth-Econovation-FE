@@ -25,6 +25,9 @@ bun run preview
 
 # ESLint 실행
 bun run lint
+
+# 테스트 실행
+bun test
 ```
 
 ## Tech Stack
@@ -40,10 +43,12 @@ bun run lint
 ## TypeScript Configuration
 
 프로젝트는 project references를 사용한 2개의 설정 파일 구조:
+
 - `tsconfig.app.json` - `src/` 내 애플리케이션 코드, strict mode 활성화
 - `tsconfig.node.json` - Vite 설정 파일용
 
 Strict 모드 추가 옵션:
+
 - `noUnusedLocals: true`
 - `noUnusedParameters: true`
 - `noFallthroughCasesInSwitch: true`
