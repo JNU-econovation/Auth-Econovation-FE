@@ -1,4 +1,4 @@
-const INTEGER_REGEX = /^-?\d+$/;
+const INTEGER_REGEX = /^\d+$/;
 const MIN_GENERATION = 1;
 const MAX_GENERATION = 99;
 

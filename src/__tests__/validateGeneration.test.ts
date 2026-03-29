@@ -26,8 +26,8 @@ describe("validateGeneration", () => {
     expect(validateGeneration("100")).toBe("기수는 1에서 99 사이여야 합니다.");
   });
 
-  it("-1은 범위 에러를 반환한다", () => {
-    expect(validateGeneration("-1")).toBe("기수는 1에서 99 사이여야 합니다.");
+  it("-1은 정수 형식 에러를 반환한다", () => {
+    expect(validateGeneration("-1")).toBe("기수는 정수만 입력할 수 있습니다.");
   });
 
   it("소수 1.5는 정수 형식 에러를 반환한다", () => {

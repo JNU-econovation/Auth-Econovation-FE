@@ -18,8 +18,8 @@ function LoginFormSection() {
       <Spacing size={24} direction="vertical" />
       <DefaultButton title="로그인 하기" fullWidth />
       <Spacing size={16} direction="vertical" />
-      <Link to="/sign-in">
-        <Text size="4">Sign up</Text>
+      <Link to="/sign-in" className="flex justify-center">
+        <Text size="7">회원가입하기</Text>
       </Link>
     </section>
   );
