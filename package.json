@@ -14,12 +14,15 @@
     "test:coverage": "bun test --coverage"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.95.2",
+    "axios": "^1.14.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.13.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@react-grab/mcp": "^0.1.25",
     "@tailwindcss/vite": "^4.1.18",
     "@types/node": "^25.1.0",
     "@types/react": "^19.0.10",
@@ -29,6 +32,7 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
+    "react-grab": "^0.1.25",
     "tailwindcss": "^4.1.18",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
