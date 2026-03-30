@@ -5,7 +5,7 @@ interface DefaultButtonProps extends ComponentProps<"button"> {
 }
 
 const DefaultButton = ({ title, fullWidth, ...props }: DefaultButtonProps) => {
-  const baseClasses = "px-6 py-3 bg-primary text-white rounded-lg";
+  const baseClasses = "px-6 py-3 bg-primary text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed";
   const fullWidthClass = fullWidth ? "w-full" : "inline-block";
   const className =
     `${baseClasses} ${fullWidthClass} ${props.className ?? ""}`.trim();
