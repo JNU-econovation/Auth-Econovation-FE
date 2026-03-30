@@ -6,7 +6,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router";
 import axios, { AxiosError } from "axios";
 import type { ActiveStatus, ApiErrorResponse } from "@/api/auth/types";
-import { useSignUp } from "@/hooks/useSignUp";
+import useSignUp from "@/hooks/features/query/mutations/useSignUp";
 import { getFieldErrorFromCode } from "./errorCodeMap";
 import { validateGeneration } from "./validateGeneration";
 import { validateId } from "./validateId";

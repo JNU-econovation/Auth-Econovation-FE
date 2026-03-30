@@ -1,6 +1,7 @@
 ---
 description: React Query를 활용한 API 통신을 위한 커스텀 훅 작성 가이드라인입니다.
-paths: ["src/hooks/**/*.ts"]
+paths:
+  - "src/hooks/features/query/**/*"
 ---
 
 # query hooks 가이드라인
