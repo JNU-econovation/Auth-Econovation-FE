@@ -11,6 +11,16 @@
     system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 @theme {
   --color-primary: #162d3a;
   --color-secondary: #2d334a;
