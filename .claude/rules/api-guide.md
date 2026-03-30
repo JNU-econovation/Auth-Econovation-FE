@@ -1,6 +1,7 @@
 ---
 description: API 요청과 관련된 가이드라인입니다.
-paths: ["src/api/*"]
+paths:
+  - "src/api/**/*"
 ---
 
 # api 가이드라인
