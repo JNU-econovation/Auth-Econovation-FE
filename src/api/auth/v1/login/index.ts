@@ -1,12 +1,12 @@
 import { apiClient } from "@/api/client";
-import type { ClientType, SignInRequest, SignInResponse } from "../types";
+import type { ClientType, SignInRequest, SignInResponse } from "../../types";
 
 /**
  * @public
  * @category Constants
  * @description 로그인 API 경로
  */
-export const SIGN_IN_API_PATH = "/api/auth/signin";
+export const SIGN_IN_API_PATH = "/api/v1/auth/login";
 
 /**
  * @public
@@ -23,9 +23,13 @@ export const signInApi = async (
   data: SignInRequest,
   clientType: ClientType,
 ): Promise<SignInResponse> => {
-  const response = await apiClient.post<SignInResponse>(SIGN_IN_API_PATH, data, {
-    headers: { "Client-Type": clientType },
-    withCredentials: true,
-  });
+  const response = await apiClient.post<SignInResponse>(
+    SIGN_IN_API_PATH,
+    data,
+    {
+      headers: { "Client-Type": clientType },
+      withCredentials: true,
+    },
+  );
   return response.data;
 };
