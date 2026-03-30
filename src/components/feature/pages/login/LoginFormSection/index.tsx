@@ -19,7 +19,7 @@ const isValidRedirectUrl = (url: string): boolean => {
 };
 
 const resolveClientType = (raw: string | null): ClientType =>
-  raw === "mobile" ? "mobile" : "web";
+  raw === "APP" ? "APP" : "WEB";
 
 function LoginFormSection() {
   const [id, setId] = useState("");
@@ -75,7 +75,7 @@ function LoginFormSection() {
             accessExpiredTime: String(accessExpiredTime),
           });
 
-          if (clientType === "mobile" && refreshToken) {
+          if (clientType === "APP" && refreshToken) {
             params.set("refreshToken", refreshToken);
           }
 

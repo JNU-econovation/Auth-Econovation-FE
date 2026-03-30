@@ -1,6 +1,6 @@
 export type ActiveStatus = "am" | "cm" | "rm" | "ob";
 
-export type ClientType = "web" | "mobile";
+export type ClientType = "WEB" | "APP";
 
 export interface SignUpRequest {
   name: string;
