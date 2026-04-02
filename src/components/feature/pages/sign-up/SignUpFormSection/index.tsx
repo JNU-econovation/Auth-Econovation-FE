@@ -3,7 +3,7 @@ import TextFieldLayout from "@shared/layout/TextFieldLayout";
 import SelectFieldLayout from "@shared/layout/SelectFieldLayout";
 import DefaultButton from "@shared/ui/DefaultButton";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import axios, { AxiosError } from "axios";
 import type { ActiveStatus, ApiErrorResponse } from "@/api/auth/types";
 import useSignUp from "@/hooks/features/query/mutations/useSignUp";
@@ -38,7 +38,10 @@ function SignUpFormSection() {
   const [activeStatusError, setActiveStatusError] = useState("");
 
   const navigate = useNavigate();
-  const mutation = useSignUp();
+  const [searchParams] = useSearchParams();
+  const rawCode = searchParams.get("code");
+  const code = rawCode && rawCode.trim().length > 0 ? rawCode : undefined;
+  const mutation = useSignUp({ code });
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
