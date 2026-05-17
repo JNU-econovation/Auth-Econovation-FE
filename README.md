@@ -1,4 +1,19 @@
-# React + TypeScript + Vite
+# auth-econovation
+
+에코노베이션 통합 인증(SSO) 프론트엔드.
+
+**공식 문서**: https://docs.auth.econovation.kr (사용자 / 통합 개발자 / 운영자 가이드 — 도메인은 운영자 확정 후 갱신)
+
+로컬에서 문서 사이트를 미리 보려면:
+
+```bash
+bun run docs:install   # 최초 1회
+bun run docs:dev       # http://localhost:5173 (또는 콘솔에 표시되는 포트)
+```
+
+---
+
+## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
