@@ -11,7 +11,11 @@
     "preview": "vite preview",
     "test": "bun test --watch",
     "test:run": "bun test",
-    "test:coverage": "bun test --coverage"
+    "test:coverage": "bun test --coverage",
+    "docs:install": "cd docs && bun install",
+    "docs:dev": "cd docs && bun run dev",
+    "docs:build": "cd docs && bun run build",
+    "docs:preview": "cd docs && bun run preview"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.95.2",
