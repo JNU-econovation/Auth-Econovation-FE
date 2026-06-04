@@ -1,34 +1,94 @@
-export type ActiveStatus = "am" | "cm" | "rm" | "ob";
+/**
+ * @public
+ * @category Types
+ * @description 회원 활동 상태. SSO 백엔드 명세의 `status` 필드 값.
+ */
+export type ActiveStatus = "AM" | "RM" | "CM" | "OB";
 
+/**
+ * @public
+ * @category Types
+ * @description 로그인/재발급/로그아웃 동작을 구분하는 클라이언트 타입.
+ * - `WEB`: AT/RT를 HttpOnly 쿠키로 발급/관리
+ * - `APP`: AT/RT를 response body로 주고받음
+ */
 export type ClientType = "WEB" | "APP";
 
+/**
+ * @public
+ * @category Types
+ * @interface SignUpRequest
+ * @description 회원 가입 요청 바디 (`POST /api/v1/auth/signup`)
+ * @property {string} name - 이름 (1~50자)
+ * @property {string} loginId - 로그인 ID (영문/숫자/`-_.` 조합 3~19자)
+ * @property {string} password - 비밀번호 (8~19자)
+ * @property {number} generation - 기수 (1~99)
+ * @property {ActiveStatus} status - 활동 상태
+ */
 export interface SignUpRequest {
   name: string;
-  id: string;
+  loginId: string;
   password: string;
   generation: number;
-  activeStatus: ActiveStatus;
+  status: ActiveStatus;
 }
 
-export interface SignUpResponse {
-  accessToken: string;
-}
-
+/**
+ * @public
+ * @category Types
+ * @interface SignInRequest
+ * @description 로그인 요청 바디 (`POST /api/v1/auth/login`)
+ * @property {string} loginId - 로그인 ID
+ * @property {string} password - 비밀번호
+ */
 export interface SignInRequest {
-  id: string;
+  loginId: string;
   password: string;
 }
 
+/**
+ * @public
+ * @category Types
+ * @interface SignInResponse
+ * @description 로그인 응답 바디. WEB은 만료 시각만, APP은 토큰까지 포함.
+ * @property {number} accessExpiredTime - AT 만료 시각 (epoch millis)
+ * @property {string} [accessToken] - Access Token (APP 전용)
+ * @property {string} [refreshToken] - Refresh Token (APP 전용)
+ */
 export interface SignInResponse {
-  data: {
-    accessToken: string;
-    accessExpiredTime: number;
-    refreshToken?: string;
-  };
-  message: string;
-  code: string;
+  accessExpiredTime: number;
+  accessToken?: string;
+  refreshToken?: string;
 }
 
+/**
+ * @public
+ * @category Types
+ * @interface ReissueRequest
+ * @description AT/RT 재발급 요청 바디 (`POST /api/v1/auth/reissue`).
+ * APP에서만 `refreshToken`을 담아 전송하고, WEB은 쿠키(`rt`)로 자동 전송하므로 비워둡니다.
+ * @property {string} [refreshToken] - Refresh Token (APP 전용)
+ */
+export interface ReissueRequest {
+  refreshToken?: string;
+}
+
+/**
+ * @public
+ * @category Types
+ * @description AT/RT 재발급 응답 바디. 로그인 응답과 동일한 형태.
+ */
+export type ReissueResponse = SignInResponse;
+
+/**
+ * @public
+ * @category Types
+ * @interface ApiErrorResponse
+ * @description 에러 응답 바디 (사용처 에러 매핑 호환용 — 백엔드 명세 정렬은 별도 작업).
+ * @property {number} status - HTTP 상태 코드
+ * @property {string} message - 사용자 표시용 메시지
+ * @property {number} code - 에러 식별 코드
+ */
 export interface ApiErrorResponse {
   status: number;
   message: string;
