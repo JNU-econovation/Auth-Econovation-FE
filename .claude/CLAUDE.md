@@ -10,6 +10,12 @@ auth-econovation은 에코노베이션 서비스들에게 통합 로그인(SSO)�
 
 **비즈니스 로직과 도메인 요구사항은 `domain-knowledge` skills를 참조하세요.**
 
+**SSO 백엔드 API 명세(요청/응답 스키마, 에러 코드, 역할 권한)가 필요할 때는 `context/sso-api-fe-docs.md`를 참조하세요.** 이 파일은 인덱스이며, 호출 주체별로 세부 문서가 `context/sso-api/`에 분리되어 있습니다:
+- `context/sso-api/frontend-auth.md` — 로그인 화면(이 레포)이 직접 호출: `signup`/`login`/`reissue`/`logout`
+- `context/sso-api/admin-ui.md` — 어드민 UI(백오피스): 클라이언트 등록·redirectUri 관리, 회원 목록 조회·역할 변경
+- `context/sso-api/client-service.md` — 외부 연동 서비스: 회원 정보 조회(`/members/batch`)
+- `context/sso-api/common.md` — 공통 에러 코드, 역할 요약, EEOS-BE PR #348 변경사항
+
 ## Development Commands
 
 ```bash
