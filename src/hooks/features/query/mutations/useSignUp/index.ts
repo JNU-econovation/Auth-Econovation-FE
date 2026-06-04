@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { signUpApi, SIGN_UP_API_PATH } from "@/api/auth/signUp";
+import { signUpApi, SIGN_UP_API_PATH } from "@/api/auth/v1/signup";
 import type { SignUpRequest } from "@/api/auth/types";
 
 interface UseSignUpProps {
