@@ -15,13 +15,13 @@ import { validatePassword } from "./validatePassword";
 import { validatePasswordConfirm } from "./validatePasswordConfirm";
 
 const ACTIVE_STATUS_OPTIONS = [
-  { value: "am", label: "AM" },
-  { value: "cm", label: "CM" },
-  { value: "rm", label: "RM" },
-  { value: "ob", label: "OB" },
+  { value: "AM", label: "AM" },
+  { value: "CM", label: "CM" },
+  { value: "RM", label: "RM" },
+  { value: "OB", label: "OB" },
 ] as const;
 
-const VALID_ACTIVE_STATUSES = new Set<string>(["am", "cm", "rm", "ob"]);
+const VALID_ACTIVE_STATUSES = new Set<string>(["AM", "CM", "RM", "OB"]);
 
 function SignUpFormSection() {
   const [name, setName] = useState("");
@@ -126,15 +126,16 @@ function SignUpFormSection() {
     mutation.mutate(
       {
         name,
-        id,
+        loginId: id,
         password,
         generation: Number(generation),
-        activeStatus: activeStatus as ActiveStatus,
+        status: activeStatus as ActiveStatus,
       },
       {
-        onSuccess: (data) => {
-          localStorage.setItem("accessToken", data.accessToken);
-          navigate("/");
+        onSuccess: () => {
+          // 명세상 회원가입 성공 시 토큰이 발급되지 않으므로, 로그인 페이지로 이동해
+          // 사용자가 가입한 계정으로 로그인하도록 합니다. (SSO 쿼리 파라미터 보존)
+          navigate({ pathname: "/", search: searchParams.toString() });
         },
         onError: (error) => {
           if (!axios.isAxiosError(error)) {

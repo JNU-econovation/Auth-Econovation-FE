@@ -57,11 +57,10 @@ function LoginFormSection() {
     }
 
     mutation.mutate(
-      { data: { id, password }, clientType },
+      { data: { loginId: id, password }, clientType },
       {
         onSuccess: (response) => {
-          const { accessToken, accessExpiredTime, refreshToken } =
-            response.data;
+          const { accessToken, accessExpiredTime, refreshToken } = response;
 
           if (!redirectUrl || !isValidRedirectUrl(redirectUrl)) {
             setLoginError(
@@ -71,10 +70,13 @@ function LoginFormSection() {
           }
 
           const params = new URLSearchParams({
-            accessToken,
             accessExpiredTime: String(accessExpiredTime),
           });
 
+          // WEB은 AT/RT가 쿠키로 발급되어 바디에 토큰이 없으므로, 존재할 때(APP)만 부착.
+          if (accessToken) {
+            params.set("accessToken", accessToken);
+          }
           if (clientType === "APP" && refreshToken) {
             params.set("refreshToken", refreshToken);
           }
