@@ -5,7 +5,8 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
-  { ignores: ['dist'] },
+  // 빌드/생성 산출물은 린트 대상에서 제외(MSW 워커, VitePress 캐시는 생성 파일).
+  { ignores: ['dist', 'public/mockServiceWorker.js', 'docs/.vitepress/cache'] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ['**/*.{ts,tsx}'],
