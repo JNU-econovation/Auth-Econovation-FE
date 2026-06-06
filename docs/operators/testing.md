@@ -44,9 +44,9 @@ export default defineConfig({
 | 파일 | 검증 대상 |
 | --- | --- |
 | `baseURL.test.ts` | `src/api/client.ts` — `VITE_API_URL` trailing slash 제거 |
-| `errorCodeMap.test.ts` | 회원가입 `errorCodeMap`의 코드 → 필드/메시지 매핑 |
-| `validateName.test.ts` | 한글만 / 최대 5자 검증 |
-| `validateId.test.ts` | 영문·숫자 / 3~19자 검증 |
+| `errorCodeMap.test.ts` | 회원가입 `errorCodeMap`의 문자열 `errorCode` → 필드/메시지 매핑 |
+| `validateName.test.ts` | 1~50자 검증 (문자셋 제한 없음) |
+| `validateId.test.ts` | 영문/숫자/`-_.` / 3~19자 검증 |
 | `validatePassword.test.ts` | 빈문자열 → 허용문자 → 길이 → 조합 순차 검증 |
 | `validatePasswordConfirm.test.ts` | 비밀번호 일치 여부 검증 |
 | `validateGeneration.test.ts` | 정수 / 1~99 검증 |

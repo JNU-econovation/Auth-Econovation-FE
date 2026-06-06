@@ -84,13 +84,13 @@ export type ReissueResponse = SignInResponse;
  * @public
  * @category Types
  * @interface ApiErrorResponse
- * @description 에러 응답 바디 (사용처 에러 매핑 호환용 — 백엔드 명세 정렬은 별도 작업).
- * @property {number} status - HTTP 상태 코드
+ * @description SSO 백엔드 공통 에러 응답 바디. `context/sso-api/common.md` 명세와 1:1로 정렬됩니다.
+ * @property {string} errorCode - 명세 에러 코드 (예: `INVALID_CREDENTIALS`, `MEMBER_ALREADY_EXISTS`)
  * @property {string} message - 사용자 표시용 메시지
- * @property {number} code - 에러 식별 코드
+ * @property {string} timestamp - 에러 발생 시각 (예: `2026-06-03T18:00:00`)
  */
 export interface ApiErrorResponse {
-  status: number;
+  errorCode: string;
   message: string;
-  code: number;
+  timestamp: string;
 }

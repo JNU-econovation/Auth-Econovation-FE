@@ -1,12 +1,9 @@
-const KOREAN_REGEX = /^[가-힣ㄱ-ㅎㅏ-ㅣ]*$/;
-const MAX_NAME_LENGTH = 5;
+// 명세(`context/sso-api/frontend-auth.md`): 이름 1~50자. 문자셋 제한 없음.
+const MAX_NAME_LENGTH = 50;
 
 export function validateName(value: string): string {
-  if (value.length > 0 && !KOREAN_REGEX.test(value)) {
-    return "이름은 한글만 입력할 수 있습니다.";
-  }
   if (value.length > MAX_NAME_LENGTH) {
-    return "이름은 최대 5자까지 입력할 수 있습니다.";
+    return "이름은 최대 50자까지 입력할 수 있습니다.";
   }
   return "";
 }

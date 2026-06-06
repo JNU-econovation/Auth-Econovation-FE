@@ -96,7 +96,7 @@ function LoginFormSection() {
             return;
           }
 
-          const message = getErrorMessageFromCode(responseData.code);
+          const message = getErrorMessageFromCode(responseData.errorCode);
           setLoginError(
             message ?? responseData.message ?? "로그인 중 오류가 발생했습니다.",
           );
