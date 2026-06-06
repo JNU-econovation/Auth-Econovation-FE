@@ -151,7 +151,7 @@ function SignUpFormSection() {
           }
 
           const fieldError = getFieldErrorFromCode(
-            responseData.code,
+            responseData.errorCode,
             responseData.message,
           );
           if (!fieldError) {

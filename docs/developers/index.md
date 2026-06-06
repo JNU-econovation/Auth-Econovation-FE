@@ -40,7 +40,7 @@ AT/RT를 콜백 URL의 쿼리스트링으로 직접 전달하면, 토큰이 브�
 | 영역 | 파일 |
 | --- | --- |
 | 로그인 API 호출 | `src/api/auth/v1/login/index.ts` |
-| 회원가입 API 호출 | `src/api/auth/signUp/index.ts` |
+| 회원가입 API 호출 | `src/api/auth/v1/signup/index.ts` |
 | 공통 타입 정의 | `src/api/auth/types.ts` |
 | 로그인 폼/콜백 처리 | `src/components/feature/pages/login/LoginFormSection/index.tsx` |
 | 회원가입 폼 | `src/components/feature/pages/sign-up/SignUpFormSection/index.tsx` |

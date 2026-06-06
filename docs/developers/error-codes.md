@@ -7,17 +7,38 @@ description: 로그인·회원가입·토큰 교환 에러 코드 표와 공통 
 
 ## 공통 에러 응답 형식
 
+SSO 백엔드는 모든 에러를 다음 형식으로 반환합니다. `errorCode`는 문자열 식별자이며,
+HTTP 상태 코드와 함께 내려옵니다.
+
 ```json
 {
-  "status": 400,
-  "message": "에러 설명",
-  "code": 4008
+  "errorCode": "INVALID_CREDENTIALS",
+  "message": "아이디 또는 비밀번호가 올바르지 않습니다.",
+  "timestamp": "2026-06-03T18:00:00"
 }
 ```
 
+## 공통 에러 코드
+
+| HTTP | errorCode | 상황 |
+| --- | --- | --- |
+| 400 | `VALIDATION_FAILED` | 필수 필드 누락, 형식 오류 |
+| 400 | `INVALID_PASSWORD_POLICY` | 비밀번호 정책 위반 |
+| 400 | `REDIRECT_URI_REQUIRED` | `redirectUris` 없음 |
+| 400 | `INVALID_ROLE` | 유효하지 않은 역할 값 |
+| 401 | `INVALID_CREDENTIALS` | 아이디/비밀번호 불일치 |
+| 401 | `REFRESH_TOKEN_MISSING` | RT 없음 |
+| 401 | `REFRESH_TOKEN_INVALID` | RT 만료, 형식 오류, AT를 RT 자리에 사용 |
+| 403 | `FORBIDDEN` | 역할 부족 |
+| 403 | `FORBIDDEN_SELF_ROLE_CHANGE` | 본인 역할 변경 시도 |
+| 404 | `NOT_FOUND` | 존재하지 않는 회원 |
+| 409 | `MEMBER_ALREADY_EXISTS` | loginId 중복 |
+| 409 | `DUPLICATE_RESOURCE` | clientName 중복 |
+| 409 | `LAST_SUPER_ADMIN_CANNOT_BE_DEMOTED` | 마지막 SUPER_ADMIN 해제 시도 |
+
 ## 토큰 교환 에러
 
-*(TBD: 아래 코드는 제안 사항입니다. 실제 코드는 구현 확정 후 갱신합니다.)*
+*(TBD: 아래 코드는 제안 사항입니다. 토큰 교환 흐름은 백엔드 확정 후 갱신합니다.)*
 
 | 코드 | 메시지 | 원인 |
 | --- | --- | --- |
@@ -28,28 +49,23 @@ description: 로그인·회원가입·토큰 교환 에러 코드 표와 공통 
 
 ## 로그인 에러 (SSO 페이지)
 
-| 코드 | 메시지 |
-| --- | --- |
-| `4008` | ID 또는 비밀번호가 일치하지 않습니다 |
+| HTTP | errorCode | 메시지 |
+| --- | --- | --- |
+| 401 | `INVALID_CREDENTIALS` | 아이디 또는 비밀번호가 올바르지 않습니다. |
+| 400 | `VALIDATION_FAILED` | 입력값이 올바르지 않습니다. |
 
 > 위 코드에 매핑되지 않는 에러는 서버 응답의 `message`가 사용자에게 그대로 표시됩니다.
 
 ## 회원가입 에러
 
-| 코드 | 필드 | 메시지 |
-| --- | --- | --- |
-| `4100` | `name` | 이름이 유효하지 않습니다 |
-| `4101` | `id` | 아이디가 유효하지 않습니다 |
-| `4102` | `id` | 이미 사용 중인 아이디입니다 |
-| `4103` | `password` | 비밀번호가 유효하지 않습니다 |
-| `4104` | `generation` | 기수가 유효하지 않습니다 |
-| `4105` | `name` | 이름은 필수 항목입니다 |
-| `4106` | `id` | 아이디는 필수 항목입니다 |
-| `4107` | `password` | 비밀번호는 필수 항목입니다 |
-| `4108` | `generation` | 기수는 필수 항목입니다 |
-| `4109` | `activeStatus` | 활동 상태는 필수 항목입니다 |
-| `4009` | `id` | 이미 존재하는 계정입니다 |
-| `3001` | `activeStatus` | (서버 응답 `message`를 그대로 사용) |
+| HTTP | errorCode | 필드 | 메시지 |
+| --- | --- | --- | --- |
+| 409 | `MEMBER_ALREADY_EXISTS` | `id` | 이미 사용 중인 아이디입니다. |
+| 400 | `INVALID_PASSWORD_POLICY` | `password` | 비밀번호 정책을 위반했습니다. |
+| 400 | `VALIDATION_FAILED` | (특정 필드 없음) | 서버 응답 `message`를 그대로 사용 |
+
+> `VALIDATION_FAILED`는 어떤 필드가 잘못됐는지 명세에 포함되지 않으므로, 특정 입력
+> 필드에 매핑하지 않고 서버 `message`로 안내합니다.
 
 **관련 코드**
 

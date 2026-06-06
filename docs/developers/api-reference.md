@@ -1,6 +1,6 @@
 ---
 title: API 명세
-description: POST /api/v1/auth/token/exchange, POST /api/v1/auth/token/refresh, POST /api/auth/signup 요청·응답 명세
+description: POST /api/v1/auth/token/exchange, POST /api/v1/auth/token/refresh, POST /api/v1/auth/signup 요청·응답 명세
 ---
 
 # API 명세
@@ -92,9 +92,10 @@ Content-Type: application/json
 
 ---
 
-## POST /api/auth/signup
+## POST /api/v1/auth/signup
 
-회원가입 API.
+회원가입 API. **성공 시 토큰을 발급하지 않습니다.** 가입 후 `POST /api/v1/auth/login`을
+별도로 호출해야 합니다.
 
 **요청 헤더**
 
@@ -110,22 +111,27 @@ Content-Type: application/json
 
 **요청 바디**
 
+| 필드 | 타입 | 필수 | 설명 |
+| --- | --- | --- | --- |
+| `name` | string | O | 이름 (1~50자) |
+| `loginId` | string | O | 영문/숫자/`-_.` 조합 3~19자 |
+| `password` | string | O | 8~19자 |
+| `generation` | number | O | 기수 (1~99) |
+| `status` | string | O | `AM` \| `RM` \| `CM` \| `OB` |
+
 ```json
 {
   "name": "홍길동",
-  "id": "hong123",
-  "password": "P@ssw0rd!",
-  "generation": 10,
-  "activeStatus": "am"
+  "loginId": "honggildong",
+  "password": "Econo1234!",
+  "generation": 30,
+  "status": "AM"
 }
 ```
 
-**응답 (200 OK)**
+**응답**
 
-```json
-{
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR..."
-}
-```
+- `201 Created` — 응답 바디 없음.
+- `400 VALIDATION_FAILED` / `400 INVALID_PASSWORD_POLICY` / `409 MEMBER_ALREADY_EXISTS` — [에러 코드](./error-codes) 참조.
 
-**관련 코드**: `src/api/auth/signUp/index.ts` (`SIGN_UP_API_PATH`, `signUpApi`)
+**관련 코드**: `src/api/auth/v1/signup/index.ts` (`SIGN_UP_API_PATH`, `signUpApi`)
