@@ -4,10 +4,15 @@ import { renderWithProviders, screen, waitFor } from "@/test/utils";
 import { server } from "@/test/mocks/server";
 import { SIGN_IN_API_PATH } from "@/api/auth/v1/login";
 import {
-  LOGIN_INVALID_CREDENTIALS,
-  LOGIN_SUCCESS_RESPONSE,
-} from "@/test/mocks/handlers";
+  MOCK_ACCESS_EXPIRED_TIME,
+  MOCK_ACCESS_TOKEN,
+  MOCK_REFRESH_TOKEN,
+} from "@/test/mocks/constants";
+import { LOGIN_INVALID_CREDENTIALS } from "@/test/mocks/handlers";
 import LoginFormSection from "./index";
+
+/** WEB 로그인 성공 응답(만료 시각만, 토큰은 쿠키로 발급). */
+const WEB_LOGIN_SUCCESS = { accessExpiredTime: MOCK_ACCESS_EXPIRED_TIME };
 
 /**
  * LoginFormSection 통합 테스트.
@@ -34,7 +39,7 @@ describe("LoginFormSection 통합 테스트", () => {
     server.use(
       http.post(`*${SIGN_IN_API_PATH}`, () => {
         requestSpy();
-        return HttpResponse.json(LOGIN_SUCCESS_RESPONSE);
+        return HttpResponse.json(WEB_LOGIN_SUCCESS);
       }),
     );
 
@@ -57,7 +62,7 @@ describe("LoginFormSection 통합 테스트", () => {
       http.post(`*${SIGN_IN_API_PATH}`, async ({ request }) => {
         receivedBody = await request.json();
         receivedClientType = request.headers.get("Client-Type");
-        return HttpResponse.json(LOGIN_SUCCESS_RESPONSE);
+        return HttpResponse.json(WEB_LOGIN_SUCCESS);
       }),
     );
 
@@ -87,7 +92,7 @@ describe("LoginFormSection 통합 테스트", () => {
     // 성공 응답 후 redirect-url로 만료 시각 쿼리를 붙여 이동
     await waitFor(() => {
       expect(window.location.href).toBe(
-        `${REDIRECT_URL}?accessExpiredTime=${LOGIN_SUCCESS_RESPONSE.accessExpiredTime}`,
+        `${REDIRECT_URL}?accessExpiredTime=${MOCK_ACCESS_EXPIRED_TIME}`,
       );
     });
   });
@@ -116,6 +121,82 @@ describe("LoginFormSection 통합 테스트", () => {
     // 에러 코드 매핑 메시지(또는 서버 메시지)가 화면에 표시되고, 리다이렉트는 일어나지 않는다.
     expect(
       await screen.findByText(LOGIN_INVALID_CREDENTIALS.message),
+    ).toBeInTheDocument();
+    expect(window.location.href).toBe("http://localhost/");
+  });
+
+  it("client-type=APP이면 바디로 받은 토큰을 쿼리에 붙여 redirect-url로 이동한다", async () => {
+    // override 없이 stateful db의 기본 핸들러 사용: APP 헤더면 토큰을 바디로 반환한다.
+    const { user } = renderWithProviders(<LoginFormSection />, {
+      route: `/?redirect-url=${encodeURIComponent(REDIRECT_URL)}&client-type=APP`,
+    });
+
+    await user.type(
+      screen.getByPlaceholderText("아이디를 입력해주세요."),
+      "honggildong",
+    );
+    await user.type(
+      screen.getByPlaceholderText("비밀번호를 입력해주세요."),
+      "Econo1234!",
+    );
+    await user.click(screen.getByRole("button", { name: "로그인 하기" }));
+
+    // APP은 AT/RT가 바디로 오므로 redirect-url에 토큰까지 쿼리로 부착된다.
+    await waitFor(() => {
+      expect(window.location.href).not.toBe("http://localhost/");
+    });
+    const url = new URL(window.location.href);
+    expect(`${url.origin}${url.pathname}`).toBe(REDIRECT_URL);
+    expect(url.searchParams.get("accessExpiredTime")).toBe(
+      String(MOCK_ACCESS_EXPIRED_TIME),
+    );
+    expect(url.searchParams.get("accessToken")).toBe(MOCK_ACCESS_TOKEN);
+    expect(url.searchParams.get("refreshToken")).toBe(MOCK_REFRESH_TOKEN);
+  });
+
+  it("로그인은 성공해도 redirect-url이 없으면 에러를 노출하고 이동하지 않는다", async () => {
+    // redirect-url 쿼리 없이 진입(잘못된 client-id로 SSO에 들어온 상황).
+    const { user } = renderWithProviders(<LoginFormSection />, {
+      route: "/",
+    });
+
+    await user.type(
+      screen.getByPlaceholderText("아이디를 입력해주세요."),
+      "honggildong",
+    );
+    await user.type(
+      screen.getByPlaceholderText("비밀번호를 입력해주세요."),
+      "Econo1234!",
+    );
+    await user.click(screen.getByRole("button", { name: "로그인 하기" }));
+
+    expect(
+      await screen.findByText(
+        "유효하지 않은 리다이렉트 URL입니다. 서비스 관리자에게 문의해주세요.",
+      ),
+    ).toBeInTheDocument();
+    expect(window.location.href).toBe("http://localhost/");
+  });
+
+  it("redirect-url 스킴이 http(s)가 아니면 에러를 노출하고 이동하지 않는다", async () => {
+    const { user } = renderWithProviders(<LoginFormSection />, {
+      route: `/?redirect-url=${encodeURIComponent("javascript:alert(1)")}`,
+    });
+
+    await user.type(
+      screen.getByPlaceholderText("아이디를 입력해주세요."),
+      "honggildong",
+    );
+    await user.type(
+      screen.getByPlaceholderText("비밀번호를 입력해주세요."),
+      "Econo1234!",
+    );
+    await user.click(screen.getByRole("button", { name: "로그인 하기" }));
+
+    expect(
+      await screen.findByText(
+        "유효하지 않은 리다이렉트 URL입니다. 서비스 관리자에게 문의해주세요.",
+      ),
     ).toBeInTheDocument();
     expect(window.location.href).toBe("http://localhost/");
   });
