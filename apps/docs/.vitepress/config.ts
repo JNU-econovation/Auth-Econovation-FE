@@ -63,7 +63,7 @@ export default defineConfig({
     outline: { level: [2, 3], label: "목차" },
     editLink: {
       pattern:
-        "https://github.com/econovation/auth-econovation/edit/develop/docs/:path",
+        "https://github.com/econovation/auth-econovation/edit/develop/apps/docs/:path",
       text: "GitHub에서 이 페이지 수정",
     },
     docFooter: {
