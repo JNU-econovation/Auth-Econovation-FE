@@ -1,5 +1,5 @@
 import { HttpResponse } from "msw";
-import type { ApiErrorResponse } from "@/api/auth/types";
+import type { ApiErrorResponse } from "../auth/types";
 
 /**
  * SSO 백엔드 명세(`context/sso-api/common.md`)의 에러 응답 스키마.
