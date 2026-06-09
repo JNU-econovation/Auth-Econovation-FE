@@ -3,57 +3,31 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "type-check": "tsc -b",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "test": "vitest",
-    "test:run": "vitest run",
-    "test:unit": "vitest run --project unit",
-    "test:integration": "vitest run --project integration",
-    "test:coverage": "vitest run --coverage",
-    "docs:install": "cd docs && bun install",
-    "docs:dev": "cd docs && bun run dev",
-    "docs:build": "cd docs && bun run build",
-    "docs:preview": "cd docs && bun run preview"
-  },
-  "dependencies": {
-    "@tanstack/react-query": "^5.95.2",
-    "axios": "^1.14.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router": "^7.13.0"
+    "dev:web": "bun run --filter @auth-econovation/web dev",
+    "dev:console": "bun run --filter @auth-econovation/console dev",
+    "dev:docs": "bun run --filter @auth-econovation/docs dev",
+    "build": "bun run --filter '*' build",
+    "build:web": "bun run --filter @auth-econovation/web build",
+    "build:console": "bun run --filter @auth-econovation/console build",
+    "build:docs": "bun run --filter @auth-econovation/docs build",
+    "test": "bun run --filter '*' test",
+    "test:web": "bun run --filter @auth-econovation/web test",
+    "test:console": "bun run --filter @auth-econovation/console test",
+    "type-check": "bun run --filter '*' type-check",
+    "lint": "eslint ."
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
-    "@react-grab/mcp": "^0.1.25",
-    "@tailwindcss/vite": "^4.1.18",
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.2",
-    "@testing-library/user-event": "^14.6.1",
-    "@types/node": "^25.1.0",
-    "@types/react": "^19.0.10",
-    "@types/react-dom": "^19.0.4",
-    "@vitejs/plugin-react-swc": "^3.8.0",
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
-    "jsdom": "^29.1.1",
-    "msw": "^2.14.6",
-    "react-grab": "^0.1.25",
-    "tailwindcss": "^4.1.18",
     "typescript": "~5.7.2",
-    "typescript-eslint": "^8.24.1",
-    "vite": "^6.2.0",
-    "vitest": "^4.0.18"
-  },
-  "msw": {
-    "workerDirectory": [
-      "public"
-    ]
+    "typescript-eslint": "^8.24.1"
   }
 }
