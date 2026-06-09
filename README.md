@@ -1,69 +1,48 @@
 # auth-econovation
 
-에코노베이션 통합 인증(SSO) 프론트엔드.
+에코노베이션 통합 인증(SSO) — **Bun workspaces 모노레포**.
+
+하나의 레포에서 SSO 웹 앱, 어드민/개발자 콘솔, 공식 문서를 관리하며, 공유 디자인 시스템과 API 레이어를 패키지로 분리합니다.
 
 **공식 문서**: https://docs.auth.econovation.kr (사용자 / 통합 개발자 / 운영자 가이드 — 도메인은 운영자 확정 후 갱신)
 
-로컬에서 문서 사이트를 미리 보려면:
+## 구조
+
+```
+auth-econovation/
+├─ apps/
+│  ├─ web/        # SSO 웹 앱 (로그인·회원가입)               @auth-econovation/web
+│  ├─ console/    # 어드민/개발자 콘솔 (클라이언트·역할 관리)  @auth-econovation/console
+│  └─ docs/       # 공식 문서 (VitePress)                     @auth-econovation/docs
+├─ packages/
+│  ├─ ui/         # 공유 디자인 시스템                         @auth-econovation/ui
+│  └─ api/        # 공유 API 레이어 (+ /admin, /mocks)         @auth-econovation/api
+├─ tsconfig.base.json   # 공통 컴파일러 옵션 (각 워크스페이스가 extends)
+└─ eslint.config.js     # 루트 flat config (전 워크스페이스 적용)
+```
+
+- 내부 패키지는 빌드 단계 없이 소스(`.ts`)를 직접 export하며, 소비 앱의 Vite/Vitest 번들러가 트랜스파일합니다.
+- 내부 참조는 `workspace:*` 프로토콜을 사용합니다.
+
+## 시작하기
 
 ```bash
-bun run docs:install   # 최초 1회
-bun run docs:dev       # http://localhost:5173 (또는 콘솔에 표시되는 포트)
+bun install            # 루트에서 1회 — 전체 워크스페이스 설치 (통합 lockfile)
+
+bun run dev:web        # SSO 웹      (apps/web)
+bun run dev:console    # 콘솔        (apps/console)
+bun run dev:docs       # 문서        (apps/docs)
+
+bun run build          # 전체 빌드   (web·console·docs)
+bun run test           # 전체 테스트 (web·console·api)
+bun run type-check     # 전체 타입체크
+bun run lint           # 루트 flat config로 전체 린트
 ```
 
----
+특정 워크스페이스만 실행: `bun run --filter @auth-econovation/web <script>`
 
-## React + TypeScript + Vite
+## 기술 스택
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 · React Router v7 · Vite 6 · Tailwind CSS v4 · TanStack Query v5 · MSW · Vitest · Bun workspaces
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+개발 명령·설정은 `.claude/skills/development-knowledge`, 배포는 [운영자 가이드 — 배포](https://docs.auth.econovation.kr/operators/deployment)(`apps/docs/operators/deployment.md`)를 참조하세요.

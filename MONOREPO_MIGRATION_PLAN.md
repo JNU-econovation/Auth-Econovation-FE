@@ -1,6 +1,6 @@
 # 모노레포 전환 계획 — auth-econovation
 
-> 작성일: 2026-06-09 · 대상: SSO 웹 + 공식 문서(docs) + **신규 개발자/어드민 콘솔**을 한 레포에서 관리
+> 작성일: 2026-06-09 · 대상: SSO 웹 + 공식 문서(docs) + **신규 어드민/개발자 콘솔(console)**을 한 레포에서 관리
 > 상태: **계획(승인 대기)** — 본 문서는 실행 전 설계 합의용입니다.
 
 ---
@@ -8,14 +8,16 @@
 ## 0. TL;DR
 
 - **결론: 모노레포 전환은 적합합니다.** 이미 한 레포에 SSO 앱(루트)과 docs(VitePress 하위 패키지)가 공존하지만 "루트=앱 + 하위 docs"라는 **비대칭 구조**라, 세 번째 사이트를 추가하기 전에 정리하는 것이 옳습니다.
-- 개발자 콘솔은 SSO 앱과 **같은 스택·디자인 시스템·API 레이어**를 공유합니다(어드민 `clients`/`members` API가 이미 MSW mock으로 설계됨). 공유 코드를 `packages/*`로 추출하면 중복·드리프트를 막을 수 있습니다.
+- 콘솔(console)은 SSO 앱과 **같은 스택·디자인 시스템·API 레이어**를 공유합니다(어드민 `clients`/`members` API가 이미 MSW mock으로 설계됨). 공유 코드를 `packages/*`로 추출하면 중복·드리프트를 막을 수 있습니다.
 - 확정된 방향:
   | 항목 | 선택 | 이유 |
   | --- | --- | --- |
-  | 개발자 페이지 성격 | **클라이언트/어드민 콘솔** (인터랙티브 React 앱) | `adminClients`/`adminMembers` mock과 일치, SSO와 자산 공유 |
+  | 콘솔 페이지 성격 | **클라이언트/어드민 콘솔** (인터랙티브 React 앱) | `adminClients`/`adminMembers` mock과 일치, SSO와 자산 공유 |
   | 재편 범위 | **전면 재편 `apps/*` 대칭** + `packages/*` 공유 | 3개 사이트 일관성·공유 극대화 |
   | 빌드 도구 | **Bun workspaces 단독** | 현 Bun 스택 유지, 추가 도구 0. Turborepo는 추후 비파괴적 추가 |
 - 배포 모델은 **현행 유지**: 사이트별 독립 Vercel 프로젝트(Root Directory 분리). SPA rewrite는 절대 공유 금지.
+
+> **용어 정리**: 본 문서의 신규 앱은 `console`(어드민/개발자 통합 콘솔)로 명명합니다. 패키지명은 `@auth-econovation/console`, 디렉토리는 `apps/console`입니다.
 
 ---
 
@@ -51,7 +53,7 @@ auth-econovation/                 ← 이 디렉토리 자체가 "SSO 프론트 
 | --- | --- |
 | `docs/`는 자체 `package.json`/`bun.lockb`/`.vitepress`를 가진 **독립 패키지**, 별도 Vercel 프로젝트로 배포 | 멀티 패키지 레포의 초기 형태가 이미 존재 |
 | 루트 `vercel.json`의 `/(.*) → /` rewrite는 **SSO 전용** | docs/콘솔을 같은 Vercel 프로젝트에 두면 모든 경로가 로그인으로 흡수됨 → **반드시 프로젝트 분리** |
-| `src/test/mocks/`에 `adminClients`(클라이언트 등록·redirectUris), `adminMembers`(역할 USER/ADMIN/SUPER_ADMIN) 핸들러 존재 (`admin-ui.md` 명세 기준) | 개발자 콘솔의 백엔드 계약이 이미 설계됨 → 콘솔은 이 mock/타입을 재사용 |
+| `src/test/mocks/`에 `adminClients`(클라이언트 등록·redirectUris), `adminMembers`(역할 USER/ADMIN/SUPER_ADMIN) 핸들러 존재 (`admin-ui.md` 명세 기준) | 콘솔의 백엔드 계약이 이미 설계됨 → 콘솔은 이 mock/타입을 재사용 |
 | `apiClient` = axios(`VITE_API_URL`, `withCredentials: true`) | 인증 쿠키 기반 공통 클라이언트 → 공유 패키지 1순위 |
 | `errorCodeMap`은 화면별(`login`/`sign-up`), 공통 매핑 유틸 `getErrorMessageFromCode` 패턴 | 변환 유틸은 공유, 화면별 맵은 앱 잔류 가능 |
 | `vitest`가 `unit`(node) / `integration`(jsdom+MSW) 프로젝트로 분리, alias 공유 | 앱별 vitest 설정 + 공유 setup 패턴 유지 |
@@ -82,7 +84,7 @@ auth-econovation/
 │  │  ├─ vercel.json           # SPA fallback (SSO 전용, 격리)
 │  │  ├─ public/ (mockServiceWorker.js)
 │  │  └─ src/                  # 로그인·회원가입 등 SSO 전용 화면 잔류
-│  ├─ developers/              # 신규 클라이언트/어드민 콘솔 → @auth-econovation/developers
+│  ├─ console/                # 신규 클라이언트/어드민 콘솔 → @auth-econovation/console
 │  │  ├─ package.json  index.html  vite.config.ts  vercel.json (SPA, 격리)
 │  │  ├─ public/
 │  │  └─ src/                  # 클라이언트 목록/등록, 역할 관리 화면
@@ -98,7 +100,7 @@ auth-econovation/
 │        ├─ auth/              # login/logout/signup/reissue + types
 │        ├─ admin/             # clients/members (콘솔 핵심, 현재 mock만 존재 → 실구현)
 │        ├─ error/             # getErrorMessageFromCode 등 공통 변환 유틸
-│        └─ mocks/             # MSW handlers + db + actor (web/developers 공유)
+│        └─ mocks/             # MSW handlers + db + actor (web/console 공유)
 └─ .claude/                    # 스킬·룰 (유지)
 ```
 
@@ -119,7 +121,7 @@ auth-econovation/
         └────────────────────────────┘     │     │
                   ▲           ▲             │     │
        ┌──────────┘           └──────────┐  │     │
-   apps/web                         apps/developers
+   apps/web                         apps/console
    (ui + api)                       (ui + api + admin)
 
    apps/docs (VitePress) — 독립, 런타임 공유 없음
@@ -129,12 +131,12 @@ auth-econovation/
 
 | 자산 | 현재 위치 | 이동 위치 | 비고 |
 | --- | --- | --- | --- |
-| 디자인 시스템 (Button/Input/Select/Text, layout/*) | `src/components/common/shared` | `packages/ui` | web·developers 공유 |
+| 디자인 시스템 (Button/Input/Select/Text, layout/*) | `src/components/common/shared` | `packages/ui` | web·console 공유 |
 | axios 클라이언트 | `src/api/client.ts` | `packages/api/client.ts` | `VITE_API_URL`·`withCredentials` |
 | 인증 API (login/logout/signup/reissue, types) | `src/api/auth` | `packages/api/auth` | 주로 web, 콘솔은 세션 재사용 |
 | 어드민 API (clients/members) | (mock만 존재) | `packages/api/admin` | **콘솔 핵심** — Phase 3에서 실구현 |
 | 에러코드 변환 유틸 | `.../errorCodeMap.ts` | `packages/api/error` | 공통 유틸만; **화면별 맵은 앱 잔류** |
-| MSW mocks (handlers/db/actor) | `src/test/mocks` | `packages/api/mocks` | web·developers 공유 |
+| MSW mocks (handlers/db/actor) | `src/test/mocks` | `packages/api/mocks` | web·console 공유 |
 | queryClient | `src/lib/queryClient.ts` | `packages/api` 또는 앱 잔류 | 기본 옵션만이면 공유, 화면 특화면 앱 |
 | 회원가입 검증 (`validate*`) | `sign-up/*` | **apps/web 잔류** | SSO 가입 폼 전용 |
 | 로그인·회원가입 페이지/섹션 | `src/app`, `feature/pages` | **apps/web 잔류** | SSO 전용 화면 |
@@ -152,7 +154,7 @@ auth-econovation/
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "dev:web":   "bun run --filter @auth-econovation/web dev",
-    "dev:console": "bun run --filter @auth-econovation/developers dev",
+    "dev:console": "bun run --filter @auth-econovation/console dev",
     "dev:docs":  "bun run --filter @auth-econovation/docs dev",
     "build":     "bun run --filter '*' build",   // 전체 빌드
     "test":      "bun run --filter '*' test",
@@ -254,18 +256,18 @@ auth-econovation/
 - [ ] 시각·동작 회귀 없음(로그인/회원가입 수동 확인)
 - **롤백**: 패키지 추출 커밋 단위 revert
 
-### Phase 3 — 개발자/어드민 콘솔 신규 앱 (~3~5d, 기능 규모에 따라)
+### Phase 3 — 어드민/개발자 콘솔(console) 신규 앱 (~3~5d, 기능 규모에 따라)
 
-- [ ] `apps/developers` 스캐폴드: Vite + React 19 + RR7 + Tailwind v4, `@auth-econovation/ui`·`/api` 의존
+- [ ] `apps/console` 스캐폴드: Vite + React 19 + RR7 + Tailwind v4, `@auth-econovation/ui`·`/api` 의존
 - [ ] 라우팅·화면: 어드민 로그인 가드 → 클라이언트 목록/등록/수정(redirectUris) → 회원 역할 관리(SUPER_ADMIN 전용)
 - [ ] `packages/api/admin`(clients/members) **실 API 구현** — 현재 mock만 존재. `.claude/rules/api-guide.md` 규칙(경로 상수 대문자, `XxxApiResponse`, `xxxApi`, JSDoc) 준수
 - [ ] MSW: 개발 모드에서 `@auth-econovation/api/mocks` 재사용, `X-Mock-Role` 헤더로 역할 시뮬레이션
 - [ ] vitest unit/integration 구성, MSW 핸들러 재사용
 
 **검증 게이트 G3**
-- [ ] developers `build`/`test` green
+- [ ] console `build`/`test` green
 - [ ] 클라이언트 등록·역할 변경 핵심 흐름 동작(통합 테스트 또는 E2E)
-- [ ] Vercel: developers 신규 프로젝트(Root Directory=`apps/developers`), 자체 `vercel.json` SPA rewrite, 도메인 연결 → preview 정상
+- [ ] Vercel: console 신규 프로젝트(Root Directory=`apps/console`), 자체 `vercel.json` SPA rewrite, 도메인 연결 → preview 정상
 
 ### Phase 4 — 마무리 (~0.5~1d)
 
@@ -280,14 +282,14 @@ auth-econovation/
 | 프로젝트 | Root Directory | Framework | Install | Build | Output | rewrite |
 | --- | --- | --- | --- | --- | --- | --- |
 | auth-web | `apps/web` | Vite | `bun install` | `bun run build` | `apps/web/dist` | **SPA `/(.*)→/`** |
-| auth-developers | `apps/developers` | Vite | `bun install` | `bun run build` | `apps/developers/dist` | **SPA `/(.*)→/`** |
+| auth-console | `apps/console` | Vite | `bun install` | `bun run build` | `apps/console/dist` | **SPA `/(.*)→/`** |
 | auth-docs | `apps/docs` | Other(VitePress) | `bun install` | `vitepress build` | `.vitepress/dist` | 없음 |
 
 **반드시 지킬 원칙**
-1. **SPA fallback rewrite는 절대 공유·통합 금지.** React 앱(web·developers)은 각자 디렉토리의 `vercel.json`에만 rewrite를 둔다. 한 프로젝트에 섞으면 docs/콘솔 경로가 로그인으로 흡수됨(docs-knowledge 경고).
+1. **SPA fallback rewrite는 절대 공유·통합 금지.** React 앱(web·console)은 각자 디렉토리의 `vercel.json`에만 rewrite를 둔다. 한 프로젝트에 섞으면 docs/콘솔 경로가 로그인으로 흡수됨(docs-knowledge 경고).
 2. **각 사이트는 독립 Vercel 프로젝트.** 모노레포여도 프로젝트 분리 유지 — 현행과 동일.
 3. **Bun workspace 빌드**: Root Directory를 `apps/web`으로 두되, Vercel "**Include source files outside of the Root Directory**"(모노레포) 옵션을 켜서 `packages/*`에 접근 가능하게 함. Install은 루트 `bun install`로 통합 lockfile 사용.
-4. **환경변수**: `VITE_API_URL`은 web·developers 각 프로젝트에 개별 설정(같은 백엔드, 콘솔은 어드민 엔드포인트 사용).
+4. **환경변수**: `VITE_API_URL`은 web·console 각 프로젝트에 개별 설정(같은 백엔드, 콘솔은 어드민 엔드포인트 사용).
 
 ---
 
@@ -317,7 +319,7 @@ auth-econovation/
 
 ## 8. 확인 필요 (TBD)
 
-- **콘솔 도메인**: `dev.auth.econovation.kr` 등 무엇으로 할지 (운영자 확정 필요)
+- **콘솔 도메인**: `console.auth.econovation.kr` 등 무엇으로 할지 (운영자 확정 필요)
 - **콘솔 인증 방식**: SSO 자체 로그인 세션 재사용 vs 어드민 전용 게이트
 - **역할 관리(SUPER_ADMIN) 포함 여부**: 콘솔에 통합 vs 운영자 어드민으로 분리
 - **CI 도입**: 현재 `.github/workflows` 없음 → GitHub Actions 등 도입 시점
