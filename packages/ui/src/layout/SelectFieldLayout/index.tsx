@@ -1,7 +1,7 @@
-import Spacing from "@shared/layout/Spacing";
-import Select from "@shared/ui/Select";
-import Text from "@shared/ui/Text";
-import type { TextColor } from "@shared/ui/Text";
+import Spacing from "../Spacing";
+import Select from "../../ui/Select";
+import Text from "../../ui/Text";
+import type { TextColor } from "../../ui/Text";
 import { ComponentProps } from "react";
 
 interface SelectFieldLayoutProps extends ComponentProps<typeof Select> {
