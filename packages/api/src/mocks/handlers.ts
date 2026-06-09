@@ -1,4 +1,4 @@
-import type { ApiErrorResponse, SignInResponse } from "@/api/auth/types";
+import type { ApiErrorResponse, SignInResponse } from "../auth/types";
 import { authHandlers } from "./auth.handlers";
 import { adminClientsHandlers } from "./adminClients.handlers";
 import { adminMembersHandlers } from "./adminMembers.handlers";
