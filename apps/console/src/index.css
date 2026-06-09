@@ -1,0 +1,11 @@
+/* Pretendard 폰트 CDN import (CSS 규칙상 @import "tailwindcss" 보다 먼저 와야 함) */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css");
+
+/* Tailwind CSS import */
+@import "tailwindcss";
+
+/*
+ * 공유 디자인 시스템(@auth-econovation/ui)의 디자인 토큰·베이스 스타일과
+ * packages/ui 클래스 스캔(@source)을 주입합니다. web과 동일한 룩앤필을 공유합니다.
+ */
+@import "@auth-econovation/ui/styles.css";
