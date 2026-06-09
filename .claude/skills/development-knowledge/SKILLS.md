@@ -1,37 +1,93 @@
 ---
-name: docs-knowledge
-description: 해당 프로젝트의 공식 문서(docs/...)에 대한 정보 정리입니다. 공식 문서를 수정할 때 읽으세요
+name: development-knowledge
+description: 해당 프로젝트의 개발시에 필요한 정보들에 대한 정리입니다. 빌드 명령, 기술 스택, 코드 포매팅, 빌드 설정에 대한 정보가 필요하면 이 스킬을 읽으세요
 ---
 
-## Documentation Site (`docs/`)
+## 모노레포 개요
 
-`docs/` 디렉터리는 **VitePress 기반 공식 문서 사이트**이며, 메인 SSO 앱과는 분리된 별도 패키지입니다. 자체 `package.json` / `bun.lockb` / `.vitepress/` 구성을 가지며, **독립된 Vercel 프로젝트**로 배포됩니다.
+본 레포는 **Bun workspaces 모노레포**입니다. `apps/*`(web·console·docs)와 `packages/*`(ui·api)로 구성되며, 루트 `bun install` 한 번으로 모든 워크스페이스를 설치합니다(통합 `bun.lockb`).
 
-### 문서 구조 (세 갈래 독자)
+| 워크스페이스 | 패키지명 | 역할 |
+| --- | --- | --- |
+| `apps/web` | `@auth-econovation/web` | SSO 웹 앱(로그인·회원가입) |
+| `apps/console` | `@auth-econovation/console` | 어드민/개발자 콘솔(클라이언트 등록·역할 관리) |
+| `apps/docs` | `@auth-econovation/docs` | 공식 문서(VitePress) |
+| `packages/ui` | `@auth-econovation/ui` | 공유 디자인 시스템(버튼/인풋/레이아웃 + `styles.css`) |
+| `packages/api` | `@auth-econovation/api` | 공유 API 레이어(client/auth + `/admin` + `/mocks`) |
 
-| 섹션               | 대상 독자                    | 주요 내용                                            |
-| ------------------ | ---------------------------- | ---------------------------------------------------- |
-| `docs/users/`      | 동아리 회원(일반 사용자)     | 회원가입, 로그인, 기존 계정 연결, FAQ                |
-| `docs/developers/` | 외부 통합 개발자             | SSO 연동 흐름, API 명세, 콜백/토큰 처리, 에러 코드   |
-| `docs/operators/`  | 본 레포 유지보수/배포 담당자 | 아키텍처, 환경 변수, 라우팅, 테스트, 배포, 운영 런북 |
+내부 패키지는 빌드 없이 소스(`.ts`)를 직접 export하며, 소비 앱의 Vite/Vitest 번들러가 트랜스파일합니다. 내부 참조는 `workspace:*` 프로토콜을 사용합니다.
 
-- 사이트 진입점: `docs/index.md` (VitePress home layout)
-- 사이드바/네비게이션 정의: `docs/.vitepress/config.ts`
-- 언어: `ko-KR`, `cleanUrls: true`, `editLink`는 **develop 브랜치** 기준
+## Development Commands
 
-### 작성·수정 시 주의사항
+```bash
+# 루트에서 1회 — 전체 워크스페이스 설치 (통합 lockfile)
+bun install
 
-1. **신규 페이지 추가 시 반드시 `docs/.vitepress/config.ts`의 sidebar에 등록**해야 사이드바에 노출됩니다. 등록하지 않으면 빌드는 되지만 탐색이 불가능합니다.
-2. **내부 링크는 확장자 없이 작성**합니다 (`cleanUrls: true`). 예: `/developers/quick-start` (`.md` 붙이지 않음).
-3. **상대 경로 링크**를 사용하면 섹션 간 이동이 안전합니다. 예: `../developers/sso-integration`.
-4. 페이지 frontmatter에는 가능한 한 `title`, `description`을 명시합니다.
-5. **소스 코드 경로를 인용할 때**는 `docs/developers/index.md` / `docs/operators/index.md` 의 "관련 소스 코드 위치" 표 형식을 따라 실제 파일 경로(`src/...`)와 함께 표기합니다. 리팩토링 시 이 경로들도 함께 갱신해야 합니다.
-6. **인증 흐름 관련 표기는 "SSO 인증 흐름 (외부 통합 기준)" 절을 단일 진실로 따릅니다.** 옛 `client-type=WEB|APP`, URL에 AT/RT 직접 전달 같은 표현이 문서에 남아 있으면 임시 토큰 교환 방식으로 정렬하세요. 미확정 항목은 임의로 채우지 말고 `*(TBD: ...)*` 표기로 명시합니다.
+# 개발 서버 (앱별)
+bun run dev:web        # apps/web
+bun run dev:console    # apps/console
+bun run dev:docs       # apps/docs
 
-### 의존성·배포 관련 주의사항
+# 전체 워크스페이스 일괄 (bun --filter '*')
+bun run build          # 전체 빌드   (web·console·docs)
+bun run test           # 전체 테스트 (web·console·api)
+bun run type-check     # 전체 타입체크 (web·console·api·ui)
+bun run lint           # 루트 flat config로 전체 린트 (1회)
 
-1. **docs 의존성 변경은 반드시 `cd docs && bun add ...`** 형태로 수행하세요. 루트 `package.json`에 VitePress가 들어가면 안 됩니다.
-2. **메인 앱의 `package.json` / `vite.config.ts` / `vercel.json`은 docs 작업 시 절대 변경 금지**입니다. 특히 루트 `vercel.json`의 SPA fallback rewrite(`/(.*) → /`)는 SSO 라우팅의 핵심이므로 docs를 같은 Vercel 프로젝트에 두면 모든 문서 경로가 로그인 페이지로 흡수됩니다 — **반드시 별도 Vercel 프로젝트(Root Directory = `docs`)로 분리**합니다.
-3. `docs/.vitepress/cache/`, `docs/.vitepress/dist/`, `docs/node_modules/`는 `docs/.gitignore`로 제외됩니다. 빌드 산출물을 커밋하지 마세요.
-4. SSO 도메인이 변경되면 `docs/developers/quick-start.md`, `docs/developers/sso-integration.md` 등의 예시 URL도 함께 갱신해야 합니다.
-5. 빌드 검증 시 메인 앱(`bun run build`)과 문서 사이트(`bun run docs:build`)가 **둘 다 0 종료 코드**로 끝나는지 확인하세요.
+# 특정 워크스페이스만
+bun run --filter @auth-econovation/web build
+bun run --filter @auth-econovation/console test
+bun run --filter @auth-econovation/docs build
+```
+
+> Bun 필터: `bun run --filter <패키지명|글롭> <script>`. 전체는 `--filter '*'`. 해당 스크립트가 없는 워크스페이스는 자동 skip됩니다.
+
+## Tech Stack
+
+- **Bun workspaces** - 모노레포 + 패키지 매니저 및 런타임
+- **React 19** with TypeScript - UI 라이브러리 (web·console)
+- **React Router v7** - 클라이언트 측 라우팅
+- **Vite 6** - 빌드 도구 및 개발 서버
+- **SWC** - Fast Refresh (via @vitejs/plugin-react-swc)
+- **Tailwind CSS v4** - 유틸리티 기반 CSS (via @tailwindcss/vite). 공유 디자인 토큰은 `packages/ui/src/styles.css`, 모노레포(node_modules 밖) 클래스 스캔은 `@source` 지시어로 등록.
+- **TanStack Query v5** - 서버 상태 / API 통신 훅
+- **MSW** - API 모킹(`@auth-econovation/api/mocks`, web·console 공유. 노드 server / 브라우저 worker 진입점 분리)
+- **Vitest** - 테스트 (unit=node / integration=jsdom+MSW 2 프로젝트)
+- **VitePress** - 문서 사이트 (apps/docs)
+- **ESLint / Prettier** - 코드 품질
+
+## TypeScript Configuration
+
+- 루트 `tsconfig.base.json` — 공통 컴파일러 옵션(strict, `moduleResolution: bundler`, `noUnusedLocals` 등). 각 앱/패키지가 `extends`.
+- 앱별 `tsconfig.app.json`(애플리케이션 코드 + `paths` alias) / `tsconfig.node.json`(Vite 설정용). project references 구조.
+- 내부 패키지는 `package.json`의 `exports`로 소스/타입을 노출합니다.
+
+Strict 모드 추가 옵션:
+
+- `noUnusedLocals: true`
+- `noUnusedParameters: true`
+- `noFallthroughCasesInSwitch: true`
+- `noUncheckedSideEffectImports: true`
+
+## Code Quality
+
+- React Hooks 규칙 및 컴포넌트 export 패턴 강제
+- TypeScript strict mode 활성화
+- ESLint 플러그인: react-hooks, react-refresh, typescript-eslint (루트 단일 flat config가 전 워크스페이스에 적용)
+
+## Project Structure
+
+```
+apps/<app>/src/
+  main.tsx          - 애플리케이션 진입점
+  App.tsx           - 라우팅 루트
+  index.css         - 글로벌 스타일 (tailwind + @auth-econovation/ui/styles.css import)
+  vite-env.d.ts     - Vite 타입 선언
+packages/<pkg>/src/
+  index.ts          - 패키지 배럴 (exports 진입점)
+```
+
+## Build Output
+
+- Development: Vite dev server의 HMR
+- Production: 각 앱 `dist/` 디렉토리 (git에서 제외). docs는 `apps/docs/.vitepress/dist`.
