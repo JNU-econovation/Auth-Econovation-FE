@@ -1,5 +1,5 @@
 {
-  "name": "auth-econovation-docs",
+  "name": "@auth-econovation/docs",
   "private": true,
   "type": "module",
   "scripts": {
