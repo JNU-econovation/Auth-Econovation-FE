@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@pages/*": ["./src/components/feature/pages/*"],
+      "@widget/*": ["./src/components/feature/widget/*"],
+      "@app/*": ["./src/app/*"]
+    }
+  },
+  "include": ["src"]
+}
