@@ -1,7 +1,7 @@
-import Spacing from "@shared/layout/Spacing";
-import Input from "@shared/ui/Input";
-import Text from "@shared/ui/Text";
-import type { TextColor } from "@shared/ui/Text";
+import Spacing from "../Spacing";
+import Input from "../../ui/Input";
+import Text from "../../ui/Text";
+import type { TextColor } from "../../ui/Text";
 import { ComponentProps } from "react";
 
 interface TextFieldLayoutProps extends ComponentProps<typeof Input> {

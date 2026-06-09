@@ -1,0 +1,47 @@
+/*
+ * 공유 디자인 시스템(@auth-econovation/ui) 토큰 + 베이스 스타일.
+ * 소비 앱(web·console)은 각자의 index.css에서 `@import "tailwindcss"` 다음에
+ * 이 파일을 @import 합니다.
+ *
+ * 참고: Pretendard 폰트 CDN(`@import url(...)`)은 CSS 규칙상 다른 규칙보다 먼저 와야 하므로
+ * 이 파일이 아닌 각 앱 index.css 최상단(`@import "tailwindcss"` 앞)에서 로드합니다.
+ *
+ * Tailwind v4는 node_modules 밖(모노레포 packages/*)의 소스를 자동 스캔하지 않으므로,
+ * 이 패키지 컴포넌트가 사용하는 유틸 클래스를 @source 로 직접 등록합니다.
+ * (@source 경로는 이 파일 기준 상대경로 → packages/ui/src 전체)
+ */
+@source ".";
+
+/* Tailwind 테마 설정: Pretendard를 기본 폰트로 */
+@theme {
+  --font-sans:
+    "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont,
+    system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@theme {
+  --color-primary: #162d3a;
+  --color-secondary: #2d334a;
+
+  --color-info: #2d6eff;
+  --color-error: #ff0000;
+
+  --color-main-black: #0c1421;
+  --color-secondary-black: #2d334a;
+
+  --color-main-gray: #959cb6;
+
+  /* input */
+  --color-input-border-gray: #d4d7e3;
+  --color-input-bg-gray: #f7fbff;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
