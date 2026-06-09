@@ -1,0 +1,27 @@
+{
+  "name": "@auth-econovation/api",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./admin": "./src/admin/index.ts",
+    "./mocks": "./src/mocks/index.ts",
+    "./mocks/server": "./src/mocks/server.ts",
+    "./mocks/browser": "./src/mocks/browser.ts"
+  },
+  "scripts": {
+    "type-check": "tsc -b",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "msw": "^2.14.6"
+  },
+  "peerDependencies": {
+    "axios": "^1"
+  },
+  "devDependencies": {
+    "typescript": "~5.7.2",
+    "vitest": "^4.0.18"
+  }
+}

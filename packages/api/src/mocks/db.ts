@@ -1,4 +1,4 @@
-import type { ActiveStatus } from "@/api/auth/types";
+import type { ActiveStatus } from "../auth/types";
 
 /**
  * MSW용 인메모리 stateful 스토어.

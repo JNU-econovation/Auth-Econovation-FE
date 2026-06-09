@@ -1,16 +1,16 @@
 /**
  * MSW 핸들러 공통 상수.
  *
- * 경로 상수는 가능한 한 실제 API 레이어(`@/api/...`)의 상수를 재사용하고,
+ * 경로 상수는 가능한 한 실제 API 레이어(`../auth/...`)의 상수를 재사용하고,
  * 아직 API 레이어가 없는 어드민/회원 엔드포인트만 여기서 정의합니다.
  * 핸들러는 baseURL(`VITE_API_URL`) 유무와 무관하게 매칭되도록 `*`(와일드카드)
  * 접두어를 붙여 사용합니다.
  */
 
-export { SIGN_UP_API_PATH } from "@/api/auth/v1/signup";
-export { SIGN_IN_API_PATH } from "@/api/auth/v1/login";
-export { REISSUE_API_PATH } from "@/api/auth/v1/reissue";
-export { LOGOUT_API_PATH } from "@/api/auth/v1/logout";
+export { SIGN_UP_API_PATH } from "../auth/v1/signup";
+export { SIGN_IN_API_PATH } from "../auth/v1/login";
+export { REISSUE_API_PATH } from "../auth/v1/reissue";
+export { LOGOUT_API_PATH } from "../auth/v1/logout";
 
 /** 어드민 클라이언트 관리 베이스 경로 (`/api/v1/admin/clients`) */
 export const ADMIN_CLIENTS_API_PATH = "/api/v1/admin/clients";

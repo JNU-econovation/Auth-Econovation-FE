@@ -4,7 +4,7 @@ import type {
   SignInRequest,
   SignInResponse,
   SignUpRequest,
-} from "@/api/auth/types";
+} from "../auth/types";
 import {
   MOCK_ACCESS_EXPIRED_TIME,
   MOCK_ACCESS_TOKEN,
