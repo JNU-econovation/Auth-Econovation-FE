@@ -3,6 +3,7 @@ import { render, type RenderOptions } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router";
+import { ToastProvider } from "@auth-econovation/ui";
 
 /**
  * 테스트 전용 QueryClient. `retry: false` + `gcTime: 0`으로 재시도/캐시 누수를 차단합니다.
@@ -34,7 +35,9 @@ export const renderWithProviders = (
 
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={client}>
-      <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
+      <MemoryRouter initialEntries={[route]}>
+        <ToastProvider>{children}</ToastProvider>
+      </MemoryRouter>
     </QueryClientProvider>
   );
 
