@@ -18,3 +18,18 @@ export const resolveApiErrorMessage = (
   }
   return fallback;
 };
+
+/**
+ * @description 공유 API 에러 응답(`{ errorCode, ... }`)에서 errorCode를 추출합니다.
+ * 폼 필드 단위 에러 분기(중복 이름·필수값 누락 등)에 사용합니다. axios 에러가 아니거나
+ * errorCode가 없으면 `undefined`를 반환합니다.
+ * @param error - catch로 잡힌 알 수 없는 에러
+ * @returns 서버가 내려준 errorCode 또는 undefined
+ */
+export const resolveApiErrorCode = (error: unknown): string | undefined => {
+  if (axios.isAxiosError(error)) {
+    const data = error.response?.data as ApiErrorResponse | undefined;
+    return data?.errorCode;
+  }
+  return undefined;
+};
