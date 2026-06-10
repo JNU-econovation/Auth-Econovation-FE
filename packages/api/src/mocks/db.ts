@@ -97,6 +97,20 @@ const seedClients = (): ClientRecord[] => [
     clientName: "ECONO SPA",
     redirectUris: ["https://app.econo.com/callback"],
   },
+  {
+    clientId: "f9e8d7c6-2b41-4c97-8d10-3a5b7c9e1f24",
+    clientName: "EEOS",
+    redirectUris: ["https://eeos.econo.com/auth/callback"],
+  },
+  {
+    clientId: "3c4d5e6f-9a87-4b65-b432-1f0e9d8c7b6a",
+    clientName: "출석 체크 봇",
+    redirectUris: [
+      "https://attend.econo.com/callback",
+      "https://staging.attend.econo.com/callback",
+      "http://localhost:3000/callback",
+    ],
+  },
 ];
 
 const createInitialDb = (): MockDb => ({
