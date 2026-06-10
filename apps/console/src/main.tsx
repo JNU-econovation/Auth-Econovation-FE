@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { ToastProvider } from "@auth-econovation/ui";
 import "./index.css";
 import App from "./App.tsx";
 import { env } from "./env";
@@ -25,7 +26,9 @@ enableMocking().then(() => {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <App />
+          <ToastProvider>
+            <App />
+          </ToastProvider>
         </BrowserRouter>
       </QueryClientProvider>
     </StrictMode>,
