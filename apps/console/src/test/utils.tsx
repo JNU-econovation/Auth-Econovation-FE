@@ -3,7 +3,6 @@ import { render, type RenderOptions } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router";
-import { MockRoleProvider } from "@/lib/mockRole";
 
 /**
  * 테스트 전용 QueryClient. `retry: false` + `gcTime: 0`으로 재시도/캐시 누수를 차단합니다.
@@ -25,7 +24,7 @@ interface RenderWithProvidersOptions extends Omit<RenderOptions, "wrapper"> {
 
 /**
  * @public
- * @description 콘솔 앱의 Provider 구성(QueryClient + Router + MockRole)으로 감싸 렌더링합니다.
+ * @description 콘솔 앱의 Provider 구성(QueryClient + Router)으로 감싸 렌더링합니다.
  */
 export const renderWithProviders = (
   ui: ReactElement,
@@ -35,9 +34,7 @@ export const renderWithProviders = (
 
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={client}>
-      <MemoryRouter initialEntries={[route]}>
-        <MockRoleProvider>{children}</MockRoleProvider>
-      </MemoryRouter>
+      <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
     </QueryClientProvider>
   );
 
