@@ -36,6 +36,74 @@
   --color-input-bg-gray: #f7fbff;
 }
 
+/*
+ * dev-console 디자인 시스템 시맨틱 토큰
+ * (기준: context/sso-dev-console/project/tokens.css).
+ *
+ * 기존 토큰(primary·info·main-* 등)을 변경하지 않고 "추가"만 합니다.
+ * 공유 DS 값에 매핑되며, 신규 컴포넌트는 이 시맨틱 토큰을 참조합니다.
+ *   primary(#162D3A)→accent · main-black→ink · main-gray→gray
+ *   input-border-gray→border · input-bg-gray→input-bg
+ * danger/warning/success는 콘솔 가이드 값(공유 DS 미정의).
+ */
+@theme {
+  --color-ink: #0c1421; /* 본문·제목 (main-black) */
+  --color-ink-soft: #5d6580; /* 보조 텍스트·테이블 헤더 (파생) */
+  --color-gray: #959cb6; /* 플레이스홀더·희미한 텍스트 (main-gray) */
+  --color-bg-sunken: #f4f6fa; /* 페이지 배경·식별자 칩 배경 */
+  --color-border: #d4d7e3; /* 구분선·보더 (input-border-gray) */
+  --color-accent: #162d3a; /* 주요 액션·포커스 링 (primary) */
+  --color-accent-weak: #e8eef1; /* 선택 행·액션 hover 배경 */
+  --color-info-weak: #eaf0ff; /* 링크/Ghost hover 배경 */
+  --color-input-bg: #f7fbff; /* 인풋 배경 (input-bg-gray) */
+  --color-input-placeholder-gray: #959cb6; /* 인풋 플레이스홀더 (기존 Input 참조 보강) */
+
+  --color-danger: #d6362b;
+  --color-danger-weak: #fcedeb;
+  --color-warning: #b97a08;
+  --color-warning-weak: #fdf4e3;
+  --color-success: #1b7f4d;
+  --color-success-weak: #e8f5ee;
+
+  /* 식별자(코드/토큰) 표기용 모노 서체. 실제 폰트 로드는 각 앱 index.css에서 수행 */
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --shadow-modal: 0 12px 32px rgba(12, 20, 33, 0.18);
+  --shadow-menu: 0 8px 24px rgba(26, 31, 46, 0.12);
+
+  /* 컴포넌트 진입 애니메이션 (Modal·Toast·Skeleton) */
+  --animate-fade: fade 150ms cubic-bezier(0.2, 0, 0, 1);
+  --animate-modal-in: modal-in 150ms cubic-bezier(0.2, 0, 0, 1);
+  --animate-toast-in: toast-in 150ms cubic-bezier(0.2, 0, 0, 1);
+  --animate-shimmer: shimmer 1.4s linear infinite;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
 html {
   height: 100%;
 }
