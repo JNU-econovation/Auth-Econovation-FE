@@ -10,3 +10,5 @@ OAuth2.0 Provider와 유사한 방식으로 동작하며, 사용자가 한 번 �
 **비즈니스 로직과 도메인 요구사항은 `domain-knowledge` skills를 참조하세요.**
 **개발 관련(빌드, 기술스택, 포매팅 등) 정보가 필요하다면 `development-knowledge` skills를 참조하세요.**
 **배포된 공식 문서 관련 정보가 필요하다면 `docs-knowledge` skills를 참조하세요.**
+
+console 워크스페이스에 대한 api관련 정보가 필요하다면 `context/v2_requirement.md` 를 확인하세요
