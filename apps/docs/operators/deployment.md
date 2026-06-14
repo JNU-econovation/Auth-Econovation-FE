@@ -20,7 +20,8 @@ description: SSO 웹·콘솔·문서 사이트의 Vercel 프로젝트 구성 (Bu
 1. **SPA fallback rewrite는 절대 공유·통합 금지.** React 앱(web·console)은 각자 디렉토리의 `vercel.json`에만 rewrite를 둡니다. 한 프로젝트에 섞으면 docs/콘솔 경로가 흡수됩니다.
 2. **각 사이트는 독립 Vercel 프로젝트.** 모노레포여도 프로젝트 분리를 유지합니다(현행과 동일).
 3. **Bun workspace 빌드.** Root Directory를 앱 디렉토리로 두되, Vercel **"Include source files outside of the Root Directory"**(모노레포) 옵션을 켜서 `packages/*`(공유 ui/api)에 접근할 수 있게 합니다. Install은 루트 통합 `bun install`을 사용합니다.
-4. **환경변수.** `VITE_API_URL`은 web·console 각 프로젝트에 개별 설정합니다(같은 백엔드, 콘솔은 어드민 엔드포인트 사용). 콘솔은 프로덕션에서 MSW를 사용하지 않습니다(`VITE_ENABLE_MSW` 미설정).
+4. **환경변수.** `VITE_API_URL`은 web·console 각 프로젝트에 개별 설정합니다(같은 백엔드, 콘솔은 어드민 엔드포인트 사용). 콘솔은 추가로 `VITE_SSO_LOGIN_URL`이 **필수**입니다(미설정 시 `src/env.ts`가 부팅 시점에 throw하여 화면이 뜨지 않음). 콘솔은 프로덕션에서 MSW를 사용하지 않습니다(`VITE_ENABLE_MSW` 미설정 또는 `false`).
+5. **Vite 환경변수는 빌드 타임에 번들로 인라인됩니다.** 런타임이 아니라 **빌드 시점**에 값이 고정되므로, 환경변수를 추가·변경하면 반드시 **재배포**해야 반영됩니다. `VITE_DEV_*`(web)·MSW 관련 변수는 개발 전용이므로 프로덕션 프로젝트에는 설정하지 않습니다.
 
 ## 공통 Vercel 설정 (web·console·docs)
 
@@ -37,7 +38,7 @@ description: SSO 웹·콘솔·문서 사이트의 Vercel 프로젝트 구성 (Bu
 | **Root Directory** | **`apps/web`** |
 | Build Command | `bun run build` (= `vite build`) |
 | Output Directory | `dist` (= `apps/web/dist`) |
-| Environment Variables | `VITE_API_URL` (Production / Preview 분리) |
+| Environment Variables | `VITE_API_URL` **(필수)** · `VITE_ENABLE_MSW`=`false`/미설정 (dev 전용 `VITE_DEV_CLIENT_ID`·`VITE_DEV_CLIENT_TYPE`는 프로덕션 불필요) |
 | SPA Fallback | `apps/web/vercel.json` |
 
 `apps/web/vercel.json`:
@@ -58,7 +59,7 @@ description: SSO 웹·콘솔·문서 사이트의 Vercel 프로젝트 구성 (Bu
 | **Root Directory** | **`apps/console`** |
 | Build Command | `bun run build` (= `vite build`) |
 | Output Directory | `dist` (= `apps/console/dist`) |
-| Environment Variables | `VITE_API_URL` (어드민 엔드포인트 사용) |
+| Environment Variables | `VITE_API_URL` **(필수, 어드민 엔드포인트)** · `VITE_SSO_LOGIN_URL` **(필수)** · `VITE_ENABLE_MSW`=`false`/미설정 |
 | SPA Fallback | `apps/console/vercel.json` |
 
 > 콘솔 도메인(예: `console.auth.econovation.kr`)과 인증 방식(SSO 세션 재사용 vs 전용 게이트)은 *(TBD: 운영자 확정)*. 현재 가드는 개발(MSW) 역할 전환 기반이며, 프로덕션은 **세션 쿠키 기반 권한 검증**(미인증 시 SSO 로그인으로 리다이렉트)으로 대체해야 합니다. 또한 콘솔의 "클라이언트 목록" 전용 엔드포인트는 백엔드 계약에 없어 단건 조회 기반으로 동작합니다 *(TBD: 목록 엔드포인트 백엔드 협의)*.
