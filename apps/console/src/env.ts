@@ -19,4 +19,12 @@ export const env = {
   apiUrl: requireEnv(import.meta.env.VITE_API_URL, "VITE_API_URL"),
   /** MSW 목 서버 구동 여부. 로컬 백엔드가 없을 때 `true`. */
   enableMsw: parseBoolEnv(import.meta.env.VITE_ENABLE_MSW),
+  /**
+   * 미인증 상태에서 "로그인" 버튼이 이동할 SSO 로그인 페이지 주소.
+   * 콘솔은 자체 로그인 폼 없이 이 주소로 리다이렉트만 합니다(v2 명세 §6-1).
+   */
+  ssoLoginUrl: requireEnv(
+    import.meta.env.VITE_SSO_LOGIN_URL,
+    "VITE_SSO_LOGIN_URL",
+  ),
 } as const;

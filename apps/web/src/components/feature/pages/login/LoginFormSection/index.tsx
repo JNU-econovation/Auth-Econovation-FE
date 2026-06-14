@@ -11,15 +11,6 @@ import type { ApiErrorResponse, ClientType } from "@auth-econovation/api";
 import useSignIn from "@/hooks/features/query/mutations/useSignIn";
 import { getErrorMessageFromCode } from "./errorCodeMap";
 
-const isValidRedirectUrl = (url: string): boolean => {
-  try {
-    const parsed = new URL(url);
-    return parsed.protocol === "http:" || parsed.protocol === "https:";
-  } catch {
-    return false;
-  }
-};
-
 const resolveClientType = (raw: string | null): ClientType =>
   raw === "APP" ? "APP" : "WEB";
 
@@ -31,7 +22,7 @@ function LoginFormSection() {
 
   const [searchParams] = useSearchParams();
   const clientType = resolveClientType(searchParams.get("client-type"));
-  const redirectUrl = searchParams.get("redirect-url") ?? "";
+  const clientId = searchParams.get("client-id") ?? "";
 
   const mutation = useSignIn();
 
@@ -58,33 +49,11 @@ function LoginFormSection() {
       return;
     }
 
+    // 로그인 성공 후 리다이렉트는 더 이상 프론트가 수행하지 않습니다(백엔드/SSO 흐름이 담당).
+    // 프론트는 자격 증명을 전송하고, 실패 시 에러만 표시합니다.
     mutation.mutate(
-      { data: { loginId: id, password }, clientType },
+      { data: { loginId: id, password, clientId }, clientType },
       {
-        onSuccess: (response) => {
-          const { accessToken, accessExpiredTime, refreshToken } = response;
-
-          if (!redirectUrl || !isValidRedirectUrl(redirectUrl)) {
-            setLoginError(
-              "유효하지 않은 리다이렉트 URL입니다. 서비스 관리자에게 문의해주세요.",
-            );
-            return;
-          }
-
-          const params = new URLSearchParams({
-            accessExpiredTime: String(accessExpiredTime),
-          });
-
-          // WEB은 AT/RT가 쿠키로 발급되어 바디에 토큰이 없으므로, 존재할 때(APP)만 부착.
-          if (accessToken) {
-            params.set("accessToken", accessToken);
-          }
-          if (clientType === "APP" && refreshToken) {
-            params.set("refreshToken", refreshToken);
-          }
-
-          window.location.href = `${redirectUrl}?${params.toString()}`;
-        },
         onError: (error) => {
           if (!axios.isAxiosError(error)) {
             setLoginError("네트워크 오류가 발생했습니다. 다시 시도해주세요.");

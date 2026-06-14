@@ -11,6 +11,7 @@ export { SIGN_UP_API_PATH } from "../auth/v1/signup";
 export { SIGN_IN_API_PATH } from "../auth/v1/login";
 export { REISSUE_API_PATH } from "../auth/v1/reissue";
 export { LOGOUT_API_PATH } from "../auth/v1/logout";
+export { ME_API_PATH } from "../auth/v1/me";
 
 /** 어드민 클라이언트 관리 베이스 경로 (`/api/v1/admin/clients`) */
 export const ADMIN_CLIENTS_API_PATH = "/api/v1/admin/clients";

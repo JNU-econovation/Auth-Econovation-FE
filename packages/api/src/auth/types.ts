@@ -40,10 +40,12 @@ export interface SignUpRequest {
  * @description 로그인 요청 바디 (`POST /api/v1/auth/login`)
  * @property {string} loginId - 로그인 ID
  * @property {string} password - 비밀번호
+ * @property {string} clientId - 로그인을 요청한 OAuth 클라이언트 ID. SSO 진입 시 `client-id` 쿼리로 전달됩니다.
  */
 export interface SignInRequest {
   loginId: string;
   password: string;
+  clientId: string;
 }
 
 /**

@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { http, HttpResponse } from "msw";
 import { Routes, Route, useLocation } from "react-router";
 import { renderWithProviders, screen, waitFor } from "@/test/utils";
 import { server } from "@auth-econovation/api/mocks/server";
-import { SIGN_UP_API_PATH } from "@auth-econovation/api";
+import { SIGN_UP_API_PATH, SIGN_IN_API_PATH } from "@auth-econovation/api";
 import {
   MOCK_ACCESS_EXPIRED_TIME,
   errorResponse,
@@ -21,7 +21,7 @@ import SignUpFormSection from "./index";
  * 모두 통과시키는 **유저 플로우**를 검증합니다.
  */
 
-const REDIRECT_URL = "https://app.econovation.kr/callback";
+const CLIENT_ID = "a1b2c3d4-1234-5678-9abc-def012345678";
 
 /** 모든 필드가 유효한 기본 입력값(MSW signup 핸들러의 통과 조건과 일치). */
 const VALID_INPUT = {
@@ -128,7 +128,7 @@ describe("SignUpFormSection 통합 테스트", () => {
         <Route path="/sign-in" element={<SignUpFormSection />} />
         <Route path="/" element={<LocationProbe />} />
       </Routes>,
-      { route: `/sign-in?redirect-url=${encodeURIComponent(REDIRECT_URL)}` },
+      { route: `/sign-in?client-id=${CLIENT_ID}` },
     );
 
     await fillSignUpForm(user);
@@ -147,12 +147,12 @@ describe("SignUpFormSection 통합 테스트", () => {
     // code 파라미터가 없으면 쿼리로 붙지 않는다
     expect(new URL(receivedUrl).searchParams.has("code")).toBe(false);
 
-    // 가입 성공 후 로그인 페이지("/")로 이동하며 SSO 쿼리(redirect-url)를 보존한다
+    // 가입 성공 후 로그인 페이지("/")로 이동하며 SSO 쿼리(client-id)를 보존한다
     await waitFor(() => {
       const location = screen.getByTestId("location").textContent ?? "";
       expect(location.startsWith("/?")).toBe(true);
       const search = new URLSearchParams(location.slice(location.indexOf("?")));
-      expect(search.get("redirect-url")).toBe(REDIRECT_URL);
+      expect(search.get("client-id")).toBe(CLIENT_ID);
     });
   });
 
@@ -171,7 +171,7 @@ describe("SignUpFormSection 통합 테스트", () => {
         <Route path="/" element={<LocationProbe />} />
       </Routes>,
       {
-        route: `/sign-in?redirect-url=${encodeURIComponent(REDIRECT_URL)}&code=sso-code-123`,
+        route: `/sign-in?client-id=${CLIENT_ID}&code=sso-code-123`,
       },
     );
 
@@ -234,30 +234,32 @@ describe("SignUpFormSection 통합 테스트", () => {
 });
 
 describe("회원가입 → 로그인 연속 여정 (stateful MSW)", () => {
-  beforeEach(() => {
-    // 로그인 성공 시 발생하는 window.location.href 할당을 가로채 검증 가능하게 만듭니다.
-    Object.defineProperty(window, "location", {
-      writable: true,
-      value: { ...window.location, href: "http://localhost/" },
-    });
-  });
+  it("가입한 계정으로 곧바로 로그인하면 자격 증명(clientId 포함)을 전송한다", async () => {
+    // 가입은 stateful db 기본 핸들러로 실제 적재하고, 로그인 요청만 가로채 전송 내용을 검증합니다.
+    // (프론트는 로그인 성공 후 더 이상 리다이렉트하지 않으므로, 검증 지점은 '요청 전송'입니다.)
+    let loginBody: unknown;
+    let loginClientType: string | null = null;
+    server.use(
+      http.post(`*${SIGN_IN_API_PATH}`, async ({ request }) => {
+        loginBody = await request.json();
+        loginClientType = request.headers.get("Client-Type");
+        return HttpResponse.json({ accessExpiredTime: MOCK_ACCESS_EXPIRED_TIME });
+      }),
+    );
 
-  it("가입한 계정으로 곧바로 로그인하면 redirect-url로 이동한다", async () => {
-    // override 없이 stateful db의 기본 핸들러를 사용 → 가입한 계정이 실제로 db에 적재되어
-    // 동일 자격으로 로그인이 성공하는 "진짜 연속 여정"을 검증합니다.
     const { user } = renderWithProviders(
       <Routes>
         <Route path="/sign-in" element={<SignUpFormSection />} />
         <Route path="/" element={<LoginFormSection />} />
       </Routes>,
-      { route: `/sign-in?redirect-url=${encodeURIComponent(REDIRECT_URL)}` },
+      { route: `/sign-in?client-id=${CLIENT_ID}` },
     );
 
     // 1) 회원가입
     await fillSignUpForm(user);
     await user.click(screen.getByRole("button", { name: "회원가입 하기" }));
 
-    // 2) 가입 성공 후 로그인 폼으로 이동(같은 라우터, redirect-url 보존)
+    // 2) 가입 성공 후 로그인 폼으로 이동(같은 라우터, client-id 보존)
     const loginButton = await screen.findByRole("button", {
       name: "로그인 하기",
     });
@@ -273,11 +275,14 @@ describe("회원가입 → 로그인 연속 여정 (stateful MSW)", () => {
     );
     await user.click(loginButton);
 
-    // 4) WEB 로그인 성공 → redirect-url로 이동(토큰은 쿠키이므로 만료 시각만 쿼리에 부착)
+    // 4) 로그인 요청이 가입 자격 + 보존된 client-id로 전송된다
     await waitFor(() => {
-      expect(window.location.href).toBe(
-        `${REDIRECT_URL}?accessExpiredTime=${MOCK_ACCESS_EXPIRED_TIME}`,
-      );
+      expect(loginBody).toEqual({
+        loginId: VALID_INPUT.id,
+        password: VALID_INPUT.password,
+        clientId: CLIENT_ID,
+      });
     });
+    expect(loginClientType).toBe("WEB");
   });
 });
