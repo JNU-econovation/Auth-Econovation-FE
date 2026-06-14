@@ -1,18 +1,31 @@
 import { NavLink, Outlet } from "react-router";
 import { Badge, Button, GridIcon, LogoMark } from "@auth-econovation/ui";
+import type { BadgeVariant } from "@auth-econovation/ui";
+import type { AdminRole } from "@auth-econovation/api/admin";
+import useAuthMeQuery from "@/hooks/features/query/querys/useAuthMeQuery";
 
 const NAV_ITEMS = [
   { to: "/clients", label: "클라이언트", icon: GridIcon },
 ] as const;
 
+/** 역할 → 배지 표기(variant + 라벨) 매핑. 역할의 도메인 의미를 디자인 토큰에 연결합니다. */
+const ROLE_BADGE: Record<AdminRole, { variant: BadgeVariant; label: string }> = {
+  SUPER_ADMIN: { variant: "super", label: "SUPER ADMIN" },
+  ADMIN: { variant: "admin", label: "ADMIN" },
+  USER: { variant: "user", label: "USER" },
+};
+
 /**
  * 콘솔 셸 레이아웃: 좌측 고정 사이드바(로고·네비·사용자) + 우측 콘텐츠 영역.
  * 중첩 라우트는 `<Outlet />`으로 렌더링합니다.
  *
- * ⚠️ 사용자 영역(이름·역할)과 로그아웃은 me/로그아웃 SSO 흐름이 아직 미확정이라 임시 정적
- * 표기입니다. 인증 통합 시 me 조회로 이름·역할을 채우고 로그아웃을 SSO 흐름에 연결합니다.
+ * 사용자 영역(이름·역할)은 `RequireAuth`가 확립한 세션의 me 조회로 채웁니다(캐시 공유).
+ * ⚠️ 로그아웃은 SSO 로그아웃 흐름이 아직 미확정이라 임시 비활성 상태입니다.
  */
 const ConsoleLayout = () => {
+  const { data: me } = useAuthMeQuery();
+  const roleBadge = me ? ROLE_BADGE[me.role] : null;
+
   return (
     <div className="grid min-h-screen grid-cols-[220px_1fr]">
       <aside className="sticky top-0 flex h-screen flex-col border-r border-border bg-white px-4 py-6">
@@ -50,16 +63,20 @@ const ConsoleLayout = () => {
 
         <div className="flex-1" />
 
-        {/* 사용자 영역 (me 미연동 — 임시 정적 표기) */}
+        {/* 사용자 영역 (me 연동) */}
         <div className="border-t border-border px-3 pt-4 pb-1">
-          <div className="text-sm font-semibold">관리자</div>
+          <div className="text-sm font-semibold">{me?.name ?? "사용자"}</div>
           <div className="mt-2 flex items-center justify-between">
-            <Badge variant="admin">ADMIN</Badge>
+            {roleBadge ? (
+              <Badge variant={roleBadge.variant}>{roleBadge.label}</Badge>
+            ) : (
+              <span />
+            )}
             <Button
               variant="ghost-plain"
               size="sm"
               disabled
-              title="로그인 연동 후 제공됩니다"
+              title="로그아웃 연동 후 제공됩니다"
             >
               로그아웃
             </Button>

@@ -9,12 +9,14 @@ import {
   MOCK_ACCESS_EXPIRED_TIME,
   MOCK_ACCESS_TOKEN,
   MOCK_REFRESH_TOKEN,
+  ME_API_PATH,
   REISSUE_API_PATH,
   SIGN_IN_API_PATH,
   SIGN_UP_API_PATH,
   LOGOUT_API_PATH,
 } from "./constants";
-import { db } from "./db";
+import { getActorMemberId } from "./actor";
+import { db, toAdminMemberView } from "./db";
 import { errorResponse } from "./errors";
 
 /**
@@ -62,6 +64,23 @@ const webTokenBody: SignInResponse = {
 };
 
 export const authHandlers = [
+  /**
+   * GET /api/v1/auth/me — 현재 로그인 사용자 조회(인증 가드의 기준 호출).
+   *
+   * 실제 백엔드는 AT 쿠키(JWT)에서 신원을 추출하지만, 모킹 환경엔 JWT 검증이 없으므로
+   * `X-Mock-Member-Id` 헤더(미지정 시 1)로 요청자를 식별합니다(`./actor` 폴백 철학).
+   * 폴백 덕에 happy path는 인증된 SUPER_ADMIN으로 동작하며, 미인증(401) 케이스는
+   * 테스트에서 `server.use(...)`로 이 핸들러를 덮어써 시뮬레이션합니다.
+   */
+  http.get(`*${ME_API_PATH}`, ({ request }) => {
+    const memberId = getActorMemberId(request);
+    const member = db.members.find((m) => m.memberId === memberId);
+    if (!member) {
+      return errorResponse("INVALID_CREDENTIALS");
+    }
+    return HttpResponse.json(toAdminMemberView(member));
+  }),
+
   /**
    * POST /api/v1/auth/signup — 회원 가입.
    * 201(바디 없음) / 400 VALIDATION_FAILED·INVALID_PASSWORD_POLICY / 409 MEMBER_ALREADY_EXISTS.
@@ -131,6 +150,10 @@ export const authHandlers = [
   /**
    * POST /api/v1/auth/login — 로그인.
    * 200(WEB: 쿠키+만료시각 / APP: 토큰 바디) / 401 INVALID_CREDENTIALS.
+   *
+   * 요청 바디는 `{ loginId, password, clientId }`입니다. `clientId`는 SSO 진입 시
+   * `client-id` 쿼리로 전달돼 어느 OAuth 클라이언트에서 온 로그인인지 식별하는 값으로,
+   * 모킹 단계에서는 수신만 하고(자격 검증은 loginId/password로 수행) 별도 검증은 하지 않습니다.
    */
   http.post(`*${SIGN_IN_API_PATH}`, async ({ request }) => {
     let body: Partial<SignInRequest>;
@@ -140,8 +163,9 @@ export const authHandlers = [
       return errorResponse("INVALID_CREDENTIALS");
     }
 
+    const { loginId, password } = body;
     const member = db.members.find(
-      (m) => m.loginId === body.loginId && m.password === body.password,
+      (m) => m.loginId === loginId && m.password === password,
     );
 
     if (!member) {
