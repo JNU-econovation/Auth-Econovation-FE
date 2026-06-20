@@ -44,7 +44,7 @@ export function useSession() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 로그인 성공 시 AT/RT가 HttpOnly 쿠키로 발급된 상태로 복귀합니다.
+    // 로그인 성공 시 Access Token/Refresh Token이 HttpOnly 쿠키로 발급된 상태로 복귀합니다.
     // credentials: "include" → 쿠키를 함께 보내 현재 사용자(/me)를 조회합니다.
     fetch(`${SSO_BASE_URL}/api/v1/auth/me`, { credentials: "include" })
       .then((res) => (res.ok ? res.json() : null)) // 401 등 실패 시 null
@@ -56,7 +56,7 @@ export function useSession() {
 }
 ```
 
-**토큰 재발급** — AT 만료 시 호출합니다. RT는 쿠키로 자동 전송됩니다.
+**토큰 재발급** — Access Token 만료 시 호출합니다. Refresh Token은 쿠키로 자동 전송됩니다.
 
 ```typescript
 const SSO_BASE_URL = "https://auth.econovation.kr";
@@ -64,11 +64,11 @@ const SSO_BASE_URL = "https://auth.econovation.kr";
 export async function reissue() {
   const res = await fetch(`${SSO_BASE_URL}/api/v1/auth/reissue`, {
     method: "POST",
-    headers: { "Client-Type": "WEB" }, // WEB 분기: RT를 쿠키로 전송
+    headers: { "Client-Type": "WEB" }, // WEB 분기: Refresh Token을 쿠키로 전송
     credentials: "include", // rt 쿠키 포함
   });
   if (!res.ok) throw new Error("reissue failed");
-  // 새 AT/RT는 다시 쿠키로 발급되고, 바디엔 만료 시각·리다이렉트 URL만 옵니다.
+  // 새 Access Token/Refresh Token은 다시 쿠키로 발급되고, 바디엔 만료 시각·리다이렉트 URL만 옵니다.
   return res.json(); // { accessExpiredTime, redirectUrl }
 }
 ```
@@ -122,7 +122,7 @@ export async function createServerSession(tokens: {
 }
 ```
 
-**토큰 재발급** — AT 만료 시 보관 중인 RT를 바디에 담아 호출합니다.
+**토큰 재발급** — Access Token 만료 시 보관 중인 Refresh Token을 바디에 담아 호출합니다.
 
 ```typescript
 const SSO_BASE_URL = "https://auth.econovation.kr";
@@ -130,12 +130,12 @@ const SSO_BASE_URL = "https://auth.econovation.kr";
 export async function reissue(refreshToken: string) {
   const res = await fetch(`${SSO_BASE_URL}/api/v1/auth/reissue`, {
     method: "POST",
-    // APP 분기: Content-Type 지정 + RT를 바디로 전송
+    // APP 분기: Content-Type 지정 + Refresh Token을 바디로 전송
     headers: { "Content-Type": "application/json", "Client-Type": "APP" },
     body: JSON.stringify({ refreshToken }),
   });
   if (!res.ok) throw new Error("reissue failed");
-  // 새 AT/RT를 바디로 받습니다.
+  // 새 Access Token/Refresh Token을 바디로 받습니다.
   return res.json(); // { accessToken, refreshToken, accessExpiredTime, redirectUrl }
 }
 ```
@@ -181,19 +181,19 @@ public class SessionController {
 
 :::
 
-**사용자 검증** — 보관한 AT로 SSO `/api/v1/auth/me`를 호출해 유효성과 사용자 정보를 확인합니다.
+**사용자 검증** — 보관한 Access Token으로 SSO `/api/v1/auth/me`를 호출해 유효성과 사용자 정보를 확인합니다.
 
 ::: code-group
 
 ```ts [Express]
 const SSO_BASE_URL = process.env.SSO_BASE_URL!; // 예: https://auth.econovation.kr
 
-// 보호 라우트 앞단에서 AT를 검증하는 미들웨어
+// 보호 라우트 앞단에서 Access Token을 검증하는 미들웨어
 export async function requireAuth(req, res, next) {
   const accessToken = req.session.tokens?.accessToken;
   if (!accessToken) return res.status(401).json({ error: "no token" });
 
-  // AT 전달 방식(Authorization 헤더 등)은 SSO 백엔드 명세에 맞춰 조정하세요.
+  // Access Token 전달 방식(Authorization 헤더 등)은 SSO 백엔드 명세에 맞춰 조정하세요.
   const me = await fetch(`${SSO_BASE_URL}/api/v1/auth/me`, {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
@@ -211,11 +211,11 @@ public class SsoClient {
   // 예: https://auth.econovation.kr
   private final RestClient client = RestClient.create(System.getenv("SSO_BASE_URL"));
 
-  // 보관한 AT로 현재 로그인 사용자를 조회합니다.
+  // 보관한 Access Token으로 현재 로그인 사용자를 조회합니다.
   public Map<String, Object> me(String accessToken) {
     return client.get()
         .uri("/api/v1/auth/me")
-        // AT 전달 방식은 SSO 백엔드 명세에 맞춰 조정하세요.
+        // Access Token 전달 방식은 SSO 백엔드 명세에 맞춰 조정하세요.
         .header("Authorization", "Bearer " + accessToken)
         .retrieve()
         .body(Map.class);
@@ -225,7 +225,7 @@ public class SsoClient {
 
 :::
 
-**토큰 재발급** — AT 만료 시 보관 중인 RT로 SSO `/api/v1/auth/reissue`를 호출합니다.
+**토큰 재발급** — Access Token 만료 시 보관 중인 Refresh Token으로 SSO `/api/v1/auth/reissue`를 호출합니다.
 
 ::: code-group
 
@@ -238,7 +238,7 @@ app.post("/sessions/reissue", async (req, res) => {
 
   const r = await fetch(`${SSO_BASE_URL}/api/v1/auth/reissue`, {
     method: "POST",
-    // APP 분기: RT를 바디로 전송
+    // APP 분기: Refresh Token을 바디로 전송
     headers: { "Content-Type": "application/json", "Client-Type": "APP" },
     body: JSON.stringify({ refreshToken }),
   });

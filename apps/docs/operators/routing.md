@@ -56,7 +56,7 @@ export default App;
 
 ## SSO 콜백 처리 흐름
 
-로그인 페이지(`/`)는 URL 쿼리 파라미터로 받은 `redirect-url`을 검증하고, 로그인 성공 후 **SSO 백엔드가 발급한 일회용 임시 토큰(`code`)**을 부착해 해당 URL로 `window.location` 이동시킵니다. 실제 AT/RT는 클라이언트 서비스 서버가 SSO 백엔드와 **별도의 서버 사이드 토큰 교환**으로 수령합니다(URL에는 노출되지 않음).
+로그인 페이지(`/`)는 URL 쿼리 파라미터로 받은 `redirect-url`을 검증하고, 로그인 성공 후 **SSO 백엔드가 발급한 일회용 임시 토큰(`code`)**을 부착해 해당 URL로 `window.location` 이동시킵니다. 실제 Access Token/Refresh Token은 클라이언트 서비스 서버가 SSO 백엔드와 **별도의 서버 사이드 토큰 교환**으로 수령합니다(URL에는 노출되지 않음).
 
 - 쿼리 파라미터 처리 위치: `src/components/feature/pages/login/LoginFormSection/index.tsx`
 - `redirect-url` 검증 규칙: `http://` 또는 `https://` 프로토콜만 허용 (자세한 사양은 [개발자 가이드](../developers/sso-integration#redirect-url-검증-규칙))

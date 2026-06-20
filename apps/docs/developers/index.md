@@ -15,7 +15,7 @@ description: auth-econovation SSO 서비스 개요와 동작 방식
 | 개발(Staging) SSO URL | *(TBD: 별도 dev 프론트 도메인 미확정)* |
 | 백엔드 API 호스트 | 환경 변수 `VITE_API_URL`로 주입 (개발 기본값 `https://dev.eeos.econovation.kr/`) |
 | 진입 쿼리 파라미터 | `client-id`(필수), `client-type`(`web` \| `app`, 기본 `web`) |
-| 토큰 발급 방식 | **WEB**: AT/RT를 HttpOnly 쿠키로 발급 · **APP**: AT/RT를 응답 바디로 반환 |
+| 토큰 발급 방식 | **WEB**: Access Token/Refresh Token을 HttpOnly 쿠키로 발급 · **APP**: Access Token/Refresh Token을 응답 바디로 반환 |
 | 로그인 후 이동 | 서버가 내려준 `redirectUrl`(클라이언트 콜백 주소)로 프론트엔드가 전체 페이지 이동 |
 
 > 인증 서버(백엔드)의 실제 API 호스트는 환경 변수 `VITE_API_URL`로 주입됩니다. 이 값은 SSO 프론트엔드가 호출하는 백엔드 주소이며, 위 "SSO URL"(사용자가 접속하는 프론트엔드 페이지)과는 구분됩니다.
@@ -29,13 +29,13 @@ description: auth-econovation SSO 서비스 개요와 동작 방식
    - 요청 바디: `{ loginId, password, clientId }`
    - 요청 헤더: `Client-Type: WEB` 또는 `APP` (쿼리 `client-type`을 대문자로 변환)
 3. SSO 백엔드가 인증에 성공하면 클라이언트 타입에 맞춰 토큰을 발급합니다.
-   - **WEB**: AT(Access Token)/RT(Refresh Token)를 **HttpOnly 쿠키**로 발급합니다. 응답 바디에는 `accessExpiredTime`과 `redirectUrl`만 포함됩니다.
-   - **APP**: AT/RT를 **응답 바디**(`accessToken` / `refreshToken`)로 반환합니다. 응답에는 `accessExpiredTime`과 `redirectUrl`도 포함됩니다.
+   - **WEB**: Access Token/Refresh Token을 **HttpOnly 쿠키**로 발급합니다. 응답 바디에는 `accessExpiredTime`과 `redirectUrl`만 포함됩니다.
+   - **APP**: Access Token/Refresh Token을 **응답 바디**(`accessToken` / `refreshToken`)로 반환합니다. 응답에는 `accessExpiredTime`과 `redirectUrl`도 포함됩니다.
 4. 프론트엔드는 응답으로 받은 `redirectUrl`로 `window.location`을 통해 **전체 페이지를 이동**시킵니다. 이 `redirectUrl`은 `client-id`에 사전 등록된 클라이언트의 콜백/복귀 주소로, 대개 SSO 페이지와 다른 오리진입니다.
 
 ## 토큰 보안 측면
 
-- **WEB 클라이언트**는 AT/RT를 HttpOnly 쿠키로 받으므로 자바스크립트에서 토큰에 접근할 수 없고, URL에도 노출되지 않습니다. 모든 인증 요청은 `withCredentials: true`(쿠키 자동 전송)로 동작합니다.
+- **WEB 클라이언트**는 Access Token/Refresh Token을 HttpOnly 쿠키로 받으므로 자바스크립트에서 토큰에 접근할 수 없고, URL에도 노출되지 않습니다. 모든 인증 요청은 `withCredentials: true`(쿠키 자동 전송)로 동작합니다.
 - **APP 클라이언트(웹뷰)** 는 토큰을 응답 바디로 직접 수령하여 앱 내부에서 가공·보관합니다.
 - 콜백 주소는 임의로 지정되지 않으며, **`client-id`에 사전 등록된 `redirectUrl`만** 서버가 응답으로 내려줍니다.
 
