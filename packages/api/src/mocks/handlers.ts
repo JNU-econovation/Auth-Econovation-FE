@@ -1,4 +1,5 @@
 import type { ApiErrorResponse, SignInResponse } from "../auth/types";
+import { MOCK_REDIRECT_URL } from "./constants";
 import { authHandlers } from "./auth.handlers";
 import { adminClientsHandlers } from "./adminClients.handlers";
 import { adminMembersHandlers } from "./adminMembers.handlers";
@@ -27,13 +28,14 @@ export const handlers = [
 
 /**
  * 로그인 성공 기본 응답(WEB). AT/RT는 HttpOnly 쿠키로 발급된다고 가정하므로
- * 바디에는 만료 시각만 포함합니다.
+ * 바디에는 만료 시각과 리다이렉트 URL만 포함합니다.
  *
  * @deprecated 신규 코드는 `./constants`의 `MOCK_ACCESS_EXPIRED_TIME`을 사용하세요.
  * 기존 통합 테스트(`LoginFormSection`)와의 호환을 위해 유지합니다.
  */
 export const LOGIN_SUCCESS_RESPONSE: SignInResponse = {
   accessExpiredTime: 1_900_000_000_000,
+  redirectUrl: MOCK_REDIRECT_URL,
 };
 
 /**

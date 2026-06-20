@@ -8,6 +8,7 @@ import type {
 import {
   MOCK_ACCESS_EXPIRED_TIME,
   MOCK_ACCESS_TOKEN,
+  MOCK_REDIRECT_URL,
   MOCK_REFRESH_TOKEN,
   ME_API_PATH,
   REISSUE_API_PATH,
@@ -51,16 +52,18 @@ const tokenCookieHeaders = (): Headers => {
 const isWeb = (request: Request): boolean =>
   (request.headers.get("Client-Type") ?? "WEB").toUpperCase() !== "APP";
 
-/** APP 응답 바디(토큰 포함). */
+/** APP 응답 바디(토큰 + 리다이렉트 URL 포함). */
 const appTokenBody: SignInResponse = {
   accessToken: MOCK_ACCESS_TOKEN,
   accessExpiredTime: MOCK_ACCESS_EXPIRED_TIME,
   refreshToken: MOCK_REFRESH_TOKEN,
+  redirectUrl: MOCK_REDIRECT_URL,
 };
 
-/** WEB 응답 바디(만료 시각만). */
+/** WEB 응답 바디(만료 시각 + 리다이렉트 URL). 토큰은 쿠키로 발급. */
 const webTokenBody: SignInResponse = {
   accessExpiredTime: MOCK_ACCESS_EXPIRED_TIME,
+  redirectUrl: MOCK_REDIRECT_URL,
 };
 
 export const authHandlers = [
