@@ -35,6 +35,13 @@ export const MOCK_REFRESH_TOKEN =
 export const MOCK_ACCESS_EXPIRED_TIME = 1_900_000_000_000;
 
 /**
+ * 모의 로그인/재발급 성공 후 이동할 리다이렉트 URL.
+ * 명세상 login/reissue 응답 바디는 WEB·APP 공통으로 `redirectUrl`을 포함합니다.
+ * seed 클라이언트(ECONO SPA)의 redirectUris와 동일한 값으로 둡니다.
+ */
+export const MOCK_REDIRECT_URL = "https://app.econo.com/callback";
+
+/**
  * 역할 가드용 모의 헤더.
  *
  * 실제 백엔드는 로그인 쿠키(JWT)에서 역할/회원ID를 추출하지만, 모킹 환경에는

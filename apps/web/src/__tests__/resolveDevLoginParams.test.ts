@@ -12,7 +12,7 @@ import {
 const DEFAULTS: DevLoginDefaults = {
   isDev: true,
   clientId: "dev-client-id",
-  clientType: "WEB",
+  clientType: "web",
 };
 
 const result = (search: string, defaults: DevLoginDefaults = DEFAULTS) =>
@@ -23,7 +23,7 @@ describe("resolveDevLoginParams", () => {
     const next = result("");
     expect(next).not.toBeNull();
     expect(next?.get("client-id")).toBe("dev-client-id");
-    expect(next?.get("client-type")).toBe("WEB");
+    expect(next?.get("client-type")).toBe("web");
   });
 
   it("운영 빌드(isDev=false)에서는 보정하지 않는다(null)", () => {
@@ -31,18 +31,18 @@ describe("resolveDevLoginParams", () => {
   });
 
   it("이미 모든 키가 채워져 있으면 보정하지 않는다(null)", () => {
-    expect(result("client-id=x&client-type=APP")).toBeNull();
+    expect(result("client-id=x&client-type=app")).toBeNull();
   });
 
   it("일부만 누락되면 누락된 키만 채우고 기존 값은 보존한다", () => {
-    const next = result("client-type=APP");
-    expect(next?.get("client-type")).toBe("APP"); // 기존 값 보존
+    const next = result("client-type=app");
+    expect(next?.get("client-type")).toBe("app"); // 기존 값 보존
     expect(next?.get("client-id")).toBe("dev-client-id"); // 누락 키만 채움
   });
 
   it("기본값이 빈 키는 건너뛴다(무한 리다이렉트 방지)", () => {
     // client-id 기본값이 비어 있고 그 키만 누락 → 채울 게 없으므로 null
-    const next = result("client-type=WEB", {
+    const next = result("client-type=web", {
       ...DEFAULTS,
       clientId: "",
     });

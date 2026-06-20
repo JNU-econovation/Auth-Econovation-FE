@@ -13,6 +13,6 @@ export const env = {
   isDev: import.meta.env.DEV,
   /** 개발용 OAuth client-id (`.env`의 VITE_DEV_CLIENT_ID). 로그인 body의 `clientId`로 전송. */
   devClientId: import.meta.env.VITE_DEV_CLIENT_ID ?? "",
-  /** 개발용 client-type. 미설정 시 "WEB". */
-  devClientType: import.meta.env.VITE_DEV_CLIENT_TYPE ?? "WEB",
+  /** 개발용 client-type(쿼리 값, 소문자). 미설정 시 "web". */
+  devClientType: import.meta.env.VITE_DEV_CLIENT_TYPE ?? "web",
 } as const;
