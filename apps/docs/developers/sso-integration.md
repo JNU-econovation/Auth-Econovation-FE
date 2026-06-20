@@ -7,7 +7,7 @@ description: 에코노베이션 SSO가 내부적으로 어떻게 동작하는지
 
 이 문서는 에코노베이션 SSO의 **내부 동작 방식**을 설명합니다. 로그인 흐름에서 어떤 일이 일어나는지, WEB과 APP의 토큰 전달 방식이 왜 다른지, 리다이렉트가 어떻게 이루어지는지를 다룹니다.
 
-연동 절차는 [Quick Start](./quick-start)를 참조하십시오. 코드 예시는 [클라이언트 예시](./client-examples)를 참조하십시오.
+> **연동만 하려는 개발자는 이 문서를 읽지 않아도 됩니다.** 서비스를 SSO와 연동하는 데 필요한 내용은 [Quick Start](./quick-start)(연동 절차)와 [클라이언트 예시](./client-examples)(코드 예시)에 모두 담겨 있습니다. 이 문서는 **SSO가 내부적으로 왜, 어떻게 동작하는지** 원리를 깊이 이해하고 싶은 독자를 위해 썼습니다.
 
 ## 전체 구조 — WEB과 APP
 
@@ -17,7 +17,7 @@ description: 에코노베이션 SSO가 내부적으로 어떻게 동작하는지
 | --- | --- | --- |
 | 토큰 전달 위치 | `at`/`rt` HttpOnly 쿠키 | 응답 본문(body) |
 | 리다이렉트 URL | `redirectUrl` 그대로 | `redirectUrl?accessToken=...&refreshToken=...&accessExpiredTime=...` |
-| 재발급 시 RT 전달 | `rt` 쿠키에서 자동 | 요청 본문 `refreshToken` 필드 |
+| 재발급 시 Refresh Token 전달 | `rt` 쿠키에서 자동 | 요청 본문 `refreshToken` 필드 |
 
 WEB은 토큰이 HttpOnly 쿠키에 담기므로 브라우저 스크립트에서 토큰에 직접 접근할 수 없습니다. APP은 토큰이 리다이렉트 URL 쿼리에 실리므로, 반드시 HTTPS를 사용하고 수신 즉시 안전한 저장소로 옮기십시오.
 
@@ -120,7 +120,7 @@ Client-Type: WEB        # 또는 APP
 
 ### WEB 응답
 
-AT/RT가 `at`/`rt` HttpOnly 쿠키로 발급됩니다. 응답 본문에는 토큰 없이 만료 시각과 콜백 URL만 담깁니다.
+Access Token/Refresh Token이 `at`/`rt` HttpOnly 쿠키로 발급됩니다. 응답 본문에는 토큰 없이 만료 시각과 콜백 URL만 담깁니다.
 
 ```json
 {
@@ -131,7 +131,7 @@ AT/RT가 `at`/`rt` HttpOnly 쿠키로 발급됩니다. 응답 본문에는 토�
 
 ### APP 응답
 
-AT/RT가 응답 본문으로 전달됩니다.
+Access Token/Refresh Token이 응답 본문으로 전달됩니다.
 
 ```json
 {
@@ -144,7 +144,7 @@ AT/RT가 응답 본문으로 전달됩니다.
 
 | 필드 | 설명 |
 | --- | --- |
-| `accessExpiredTime` | AT 만료 시각. Unix epoch 밀리초(ms) 단위입니다. |
+| `accessExpiredTime` | Access Token 만료 시각. Unix epoch 밀리초(ms) 단위입니다. |
 | `redirectUrl` | 로그인 성공 후 이동할 콜백 URL. WEB·APP 공통으로 응답합니다. |
 | `accessToken` | Access Token. APP 전용입니다. |
 | `refreshToken` | Refresh Token. APP 전용입니다. |
@@ -170,15 +170,15 @@ APP 흐름의 쿼리 파라미터 키는 `accessToken`, `refreshToken`, `accessE
 
 ## 토큰 재발급
 
-AT가 만료되면 RT로 새 AT/RT를 발급받습니다. 재발급 시에도 `Client-Type` 헤더에 따라 RT 전달 방식이 달라집니다.
+Access Token이 만료되면 Refresh Token으로 새 Access Token/Refresh Token을 발급받습니다. 재발급 시에도 `Client-Type` 헤더에 따라 Refresh Token 전달 방식이 달라집니다.
 
 ```
 POST /api/v1/auth/reissue
 Client-Type: WEB        # 또는 APP
 ```
 
-- **WEB**: RT를 `rt` 쿠키에서 자동으로 읽습니다. 요청 본문은 비워 둡니다. 새 토큰도 쿠키로 내려옵니다.
-- **APP**: RT를 요청 본문 `refreshToken` 필드에 담아 보냅니다. 새 토큰도 본문으로 받습니다.
+- **WEB**: Refresh Token을 `rt` 쿠키에서 자동으로 읽습니다. 요청 본문은 비워 둡니다. 새 토큰도 쿠키로 내려옵니다.
+- **APP**: Refresh Token을 요청 본문 `refreshToken` 필드에 담아 보냅니다. 새 토큰도 본문으로 받습니다.
 
 ```json
 // APP 재발급 요청 본문

@@ -36,7 +36,7 @@ SSO 연동 중 자주 마주치는 문제와 해결 방법을 정리했습니다
 
 ### APP(웹뷰)에서 토큰 수신하는 방법
 
-APP은 액세스 토큰(AT)/리프레시 토큰(RT)을 응답 바디(`accessToken`/`refreshToken`)로 받습니다. 프론트엔드는 이 토큰들과 `accessExpiredTime`을 서버가 응답한 `redirectUrl`에 쿼리로 붙여 이동합니다. 커스텀 스킴 콜백(예: `econoapp://callback`)도 지원하므로, 네이티브 앱이 해당 콜백 URL의 쿼리에서 토큰을 읽으면 됩니다.
+APP은 Access Token/Refresh Token을 응답 바디(`accessToken`/`refreshToken`)로 받습니다. 프론트엔드는 이 토큰들과 `accessExpiredTime`을 서버가 응답한 `redirectUrl`에 쿼리로 붙여 이동합니다. 커스텀 스킴 콜백(예: `econoapp://callback`)도 지원하므로, 네이티브 앱이 해당 콜백 URL의 쿼리에서 토큰을 읽으면 됩니다.
 
 ```
 econoapp://callback?accessToken=...&refreshToken=...&accessExpiredTime=...
@@ -44,7 +44,15 @@ econoapp://callback?accessToken=...&refreshToken=...&accessExpiredTime=...
 
 ### WEB에서 리다이렉트 URL에 토큰이 보이지 않는 경우
 
-정상입니다. WEB은 AT/RT를 HttpOnly 쿠키로 발급받으므로 URL에 토큰이 첨부되지 않습니다. 서버가 응답한 `redirectUrl`로 이동하며, 교차 출처 이동 시 브라우저가 쿠키를 함께 전송합니다.
+정상입니다. WEB은 Access Token/Refresh Token을 HttpOnly 쿠키로 발급받으므로 URL에 토큰이 첨부되지 않습니다. 서버가 응답한 `redirectUrl`로 이동하며, 교차 출처 이동 시 브라우저가 쿠키를 함께 전송합니다.
+
+### WEB이 토큰을 응답 바디가 아닌 쿠키로 받는 이유
+
+쿠키는 같은 상위 도메인을 공유하는 서브도메인끼리 자동으로 함께 전송되기 때문입니다. 인증 쿠키를 `econovation.kr` 도메인에 발급하면, `auth.econovation.kr`에서 로그인한 사용자는 `*.econovation.kr`의 다른 서비스도 추가 로그인 없이 인증된 상태로 이용할 수 있습니다. 이 도메인 단위 쿠키 공유가 SSO의 핵심 동작입니다. (HttpOnly 쿠키라 JavaScript로 토큰에 접근할 수 없는 보안 이점도 따라옵니다.)
+
+### `econovation.kr` 서브도메인이 아닌 서비스가 토큰을 받는 방법
+
+쿠키 공유는 같은 상위 도메인 안에서만 동작합니다. 따라서 `econovation.kr` 서브도메인이 아닌 환경 — 네이티브 앱의 웹뷰나 다른 도메인의 웹 서비스 — 은 쿠키로 세션을 공유받을 수 없습니다. 이때는 `client-type=app`으로 진입해 토큰을 쿠키 대신 응답 바디(`accessToken`/`refreshToken`)와 콜백 URL 쿼리로 직접 받고, 클라이언트가 직접 저장·관리합니다([APP(웹뷰)에서 토큰 수신하는 방법](#app웹뷰에서-토큰-수신하는-방법) 참고).
 
 ## 에러 처리
 
