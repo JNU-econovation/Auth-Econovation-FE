@@ -65,4 +65,4 @@ src/api/
   - `MEMBER_ALREADY_EXISTS`(id), `INVALID_PASSWORD_POLICY`(password)를 필드에 매핑
   - `VALIDATION_FAILED`는 특정 필드 정보가 없어 서버 `message`로 안내
 
-> 매핑되지 않은 코드의 처리 정책은 "서버 `message`를 그대로 노출"입니다. 새 에러 코드를 도입할 때는 페이지 단위 `errorCodeMap.ts`와 [개발자 가이드 — 에러 코드](../developers/error-codes)를 함께 갱신하세요.
+> 매핑되지 않은 코드의 처리 정책은 "서버 `message`를 그대로 노출"입니다. 새 에러 코드를 도입할 때는 페이지 단위 `errorCodeMap.ts`와 [개발자 가이드 — API 명세](../developers/api-reference)를 함께 갱신하세요.
