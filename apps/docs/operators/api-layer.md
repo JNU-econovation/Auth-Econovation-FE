@@ -32,7 +32,7 @@ src/api/
         ├─ login/
         │   └─ index.ts      # POST /api/v1/auth/login (SSO 내부 인증용, withCredentials)
         ├─ reissue/
-        │   └─ index.ts      # POST /api/v1/auth/reissue (AT/RT 재발급)
+        │   └─ index.ts      # POST /api/v1/auth/reissue (Access Token/Refresh Token 재발급)
         └─ logout/
             └─ index.ts      # POST /api/v1/auth/logout (멱등)
 ```
@@ -41,7 +41,7 @@ src/api/
 | --- | --- | --- |
 | `src/api/auth/v1/login/index.ts` | `POST /api/v1/auth/login` | SSO 페이지가 ID/PW를 백엔드에 제출할 때 사용. `withCredentials: true` |
 | `src/api/auth/v1/signup/index.ts` | `POST /api/v1/auth/signup` | 선택적 `?code=<sso-auth-code>` 쿼리. 성공 시 토큰 미발급 |
-| `src/api/auth/v1/reissue/index.ts` | `POST /api/v1/auth/reissue` | AT 만료 시 RT로 재발급 |
+| `src/api/auth/v1/reissue/index.ts` | `POST /api/v1/auth/reissue` | Access Token 만료 시 Refresh Token으로 재발급 |
 | `src/api/auth/v1/logout/index.ts` | `POST /api/v1/auth/logout` | 멱등 |
 | `src/api/auth/types.ts` | - | 요청/응답 타입 및 공통 에러 응답 타입 |
 
