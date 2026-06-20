@@ -15,7 +15,7 @@ description: 자주 발생하는 운영 이슈 대응 절차 템플릿
 
 1. **백엔드 헬스 체크**: `VITE_API_URL`로 직접 `curl`을 보내 응답을 확인합니다. 본 프론트엔드 문제가 아닌 백엔드 장애일 가능성이 가장 큽니다.
 2. **네트워크 탭**: 브라우저 DevTools → Network 탭에서 `POST /api/v1/auth/login` 요청 상태 코드와 응답 바디를 확인합니다.
-3. **에러 코드 매핑**: `INVALID_CREDENTIALS` 외의 새로운 `errorCode`가 보이면 [개발자 가이드 — 에러 코드](../developers/error-codes)에 추가하고 `errorCodeMap.ts`를 갱신합니다.
+3. **에러 코드 매핑**: `INVALID_CREDENTIALS` 외의 새로운 `errorCode`가 보이면 [개발자 가이드 — API 명세](../developers/api-reference)에 추가하고 `errorCodeMap.ts`를 갱신합니다.
 4. **CORS / withCredentials**: 백엔드 도메인이 변경되었거나 CORS 허용 origin 목록이 갱신되지 않은 경우 로그인이 일제히 실패합니다. 백엔드 운영자에게 확인 요청.
 
 ## `VITE_API_URL` 변경이 필요한 경우
@@ -52,7 +52,7 @@ description: 자주 발생하는 운영 이슈 대응 절차 템플릿
 `accessExpiredTime`은 백엔드가 발급하는 초 단위 Unix timestamp입니다. 만료 정책(예: 1시간 → 24시간)을 백엔드에서 변경할 경우:
 
 - 본 프론트엔드 코드 변경은 필요하지 않습니다(값을 그대로 전달만 함).
-- 다만 외부 서비스가 만료 처리 로직에 영향을 받을 수 있으니, 개발자 가이드 [토큰 사용 가이드](../developers/token-guide#만료-시간-처리)와 변경 사항을 공지하세요.
+- 다만 외부 서비스가 만료 처리 로직에 영향을 받을 수 있으니, 연동된 외부 서비스에 변경 사항을 공지하세요.
 
 ## 새 외부 서비스가 SSO를 연동하고 싶다고 할 때
 

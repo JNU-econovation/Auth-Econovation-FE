@@ -31,12 +31,9 @@ export default defineConfig({
           items: [
             { text: "서비스 개요", link: "/developers/" },
             { text: "Quick Start", link: "/developers/quick-start" },
-            { text: "SSO 로그인 연동", link: "/developers/sso-integration" },
+            { text: "SSO 동작 들여다보기", link: "/developers/sso-integration" },
             { text: "클라이언트 예시", link: "/developers/client-examples" },
-            { text: "회원가입 페이지 진입", link: "/developers/sign-up-page" },
             { text: "API 명세", link: "/developers/api-reference" },
-            { text: "에러 코드", link: "/developers/error-codes" },
-            { text: "토큰 사용 가이드", link: "/developers/token-guide" },
             { text: "FAQ / 트러블슈팅", link: "/developers/faq" },
           ],
         },

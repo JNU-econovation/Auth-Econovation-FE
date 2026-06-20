@@ -102,5 +102,5 @@ bun run build:docs
 
 ## 도메인 / DNS 변경
 
-- 도메인이 변경되면 [개발자 가이드 — Quick Start](../developers/quick-start), [SSO 로그인 연동](../developers/sso-integration) 의 예시 URL도 함께 갱신하세요.
+- 도메인이 변경되면 [개발자 가이드 — Quick Start](../developers/quick-start), [SSO 동작 들여다보기](../developers/sso-integration) 의 예시 URL도 함께 갱신하세요.
 - 외부 서비스가 하드코딩한 SSO URL이 있을 수 있으므로, 도메인 변경 전 동아리 채널에 사전 공지가 필요합니다.
