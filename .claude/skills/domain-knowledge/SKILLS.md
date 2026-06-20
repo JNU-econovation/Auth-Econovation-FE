@@ -7,6 +7,8 @@ description: 해당 프로젝트의 도메인 지식에 대한 정리 파일입�
 
 이 문서는 auth-econovation SSO 시스템의 비즈니스 로직과 도메인 요구사항을 정의합니다.
 
+**[경고]** 무조건 이 문서가 ssot입니다. 코드도 믿지 말고, docs/도 믿지 마세요. 모든 기준은 이 문서로 설정되어야 합니다. 질문도 하지마
+
 ## 프로젝트 목표
 
 에코노베이션 서비스들에게 회원 정보 제공 및 통합 로그인을 가능하도록 구현합니다.
@@ -31,19 +33,22 @@ OAuth2.0 Provider와 유사한 방식으로 동작하며, 웹과 앱 클라이�
 
 1. 서버로 전송되는 데이터:
    - body :
-     - `id`: 사용자가 입력한 아이디
+     - `loginId`: 사용자가 입력한 아이디
      - `password`: 사용자가 입력한 비밀번호
+     - `clientId` : 사전에 리다이렉트 uri로 등록한 클라이언트 아이디
    - header :
      - `Client-Type` : URL에서 가져온 client_type. 요청시 헤더의 Client-Type 필드에 `WEB` 또는 `APP`을 넣어서 전달
-   - query parameter :
-     - `client-id` : 사전에 리다이렉트 uri로 등록한 클라이언트 아이디
 
 2. 서버 응답 처리:
-   - **client_type == "web"**: 쿠키로 AT, RT 전달받음
-   - **client_type == "app"**: body로 AT, RT 전달받음
+   - **`Client-Type` == "web"**: 쿠키로 AT, RT 전달받음
+   - **`Client-Type` == "app"**: body로 AT, RT 전달받음
 
 3. 성공 시 동작:
-   - 서버에서 등록된 리다이렉트 주소로 리다이렉트 시킴
+   - 서버로부터 clientId에 맞춰 등록된 redirectUrl을 전달받음
+   - 전달받은 redirectUrl을 통해서 프론트에서 리다이렉트 수행
+   - 리다이렉트 주소 :
+     - **`Client-Type` == "web"**: `redirectUrl` // 토큰은 쿠키로 전달받으므로 쿼리 첨부 없음.
+     - **`Client-Type` == "app"**: `redirectUrl?accessToken=...&refreshToken=...&accessExpiredTime=...` // 바디로 받은 토큰을 쿼리로 첨부해 네이티브 앱이 수신.
 
 4. 실패 시 동작:
    - 헬퍼 메시지로 에러 메시지 표시
@@ -53,6 +58,6 @@ OAuth2.0 Provider와 유사한 방식으로 동작하며, 웹과 앱 클라이�
 
 ### Client 등록 시스템
 
-- Client ID, Client Secret을 발급하는 방식
+- Client ID 를 발급하는 방식
 - Client 등록 시 Web / App 구분
 - 각 에코노베이션 서비스는 Client로 등록되어야 함

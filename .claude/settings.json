@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -c 'if ((.tool_input.file_path // \"\") | test(\"apps/docs/.*[.](md|markdown)$\")) then {hookSpecificOutput:{hookEventName:\"PreToolUse\",additionalContext:\"이 파일은 apps/docs/ 공식 문서입니다. 기술 문서를 작성·수정할 때는 technical-writing 스킬의 3단계 워크플로우(문서 유형 → 정보 구조 → 문장 다듬기)를 따르고, 필요 시 tw-type-classifier·tw-structure-reviewer·tw-sentence-polisher 에이전트를 호출하세요. 기준 문서: context/technical-writing/. 코드와 문서가 충돌하면 코드가 우선입니다.\"}} else empty end' 2>/dev/null || true",
+            "statusMessage": "문서 작성 가이드 확인 중"
+          }
+        ]
+      }
+    ]
+  }
+}

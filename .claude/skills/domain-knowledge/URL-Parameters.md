@@ -11,4 +11,5 @@
 - 가능한 값: `"web"` | `"app"`
 - 기본값: `"web"`
 - 웹 서비스면 "web", 앱 서비스의 웹뷰면 "app"
-- 예: `auth.econovation.kr?redirect=https://...&client_type=app`
+
+- 예: `auth.econovation.kr?client-type=app&client-id="..."`
