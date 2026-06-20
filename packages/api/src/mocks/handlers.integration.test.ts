@@ -3,6 +3,7 @@ import {
   ADMIN_CLIENTS_API_PATH,
   ADMIN_MEMBERS_API_PATH,
   MEMBERS_BATCH_API_PATH,
+  MOCK_REDIRECT_URL,
   MOCK_REFRESH_TOKEN,
   REISSUE_API_PATH,
   SIGN_IN_API_PATH,
@@ -86,7 +87,7 @@ describe("그룹 1 — signup", () => {
 });
 
 describe("그룹 1 — login", () => {
-  it("WEB 성공 시 쿠키(at/rt)와 만료 시각만 반환", async () => {
+  it("WEB 성공 시 쿠키(at/rt)와 만료 시각·리다이렉트 URL만 반환", async () => {
     const res = await call("POST", SIGN_IN_API_PATH, {
       loginId: "honggildong",
       password: "Econo1234!",
@@ -96,10 +97,11 @@ describe("그룹 1 — login", () => {
     expect(setCookie).toContain("at=");
     const json = await res.json();
     expect(json.accessExpiredTime).toBeTypeOf("number");
+    expect(json.redirectUrl).toBe(MOCK_REDIRECT_URL);
     expect(json.accessToken).toBeUndefined();
   });
 
-  it("APP 성공 시 토큰을 바디로 반환", async () => {
+  it("APP 성공 시 토큰과 리다이렉트 URL을 바디로 반환", async () => {
     const res = await call(
       "POST",
       SIGN_IN_API_PATH,
@@ -109,6 +111,7 @@ describe("그룹 1 — login", () => {
     const json = await res.json();
     expect(json.accessToken).toBeTruthy();
     expect(json.refreshToken).toBe(MOCK_REFRESH_TOKEN);
+    expect(json.redirectUrl).toBe(MOCK_REDIRECT_URL);
   });
 
   it("자격 불일치 시 401 INVALID_CREDENTIALS", async () => {
@@ -135,12 +138,14 @@ describe("그룹 1 — reissue", () => {
     expect((await res.json()).errorCode).toBe("REFRESH_TOKEN_INVALID");
   });
 
-  it("WEB: 유효한 rt 쿠키면 200 + 새 쿠키", async () => {
+  it("WEB: 유효한 rt 쿠키면 200 + 새 쿠키(만료 시각·리다이렉트 URL 포함)", async () => {
     const res = await call("POST", REISSUE_API_PATH, undefined, {
       Cookie: `rt=${MOCK_REFRESH_TOKEN}`,
     });
     expect(res.status).toBe(200);
-    expect((await res.json()).accessExpiredTime).toBeTypeOf("number");
+    const json = await res.json();
+    expect(json.accessExpiredTime).toBeTypeOf("number");
+    expect(json.redirectUrl).toBe(MOCK_REDIRECT_URL);
   });
 
   it("APP: refreshToken 누락 시 401 REFRESH_TOKEN_MISSING", async () => {
@@ -148,14 +153,16 @@ describe("그룹 1 — reissue", () => {
     expect((await res.json()).errorCode).toBe("REFRESH_TOKEN_MISSING");
   });
 
-  it("APP: 유효한 refreshToken이면 200 + 토큰 바디", async () => {
+  it("APP: 유효한 refreshToken이면 200 + 토큰·리다이렉트 URL 바디", async () => {
     const res = await call(
       "POST",
       REISSUE_API_PATH,
       { refreshToken: MOCK_REFRESH_TOKEN },
       { "Client-Type": "APP" },
     );
-    expect((await res.json()).accessToken).toBeTruthy();
+    const json = await res.json();
+    expect(json.accessToken).toBeTruthy();
+    expect(json.redirectUrl).toBe(MOCK_REDIRECT_URL);
   });
 });
 

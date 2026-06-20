@@ -52,13 +52,15 @@ export interface SignInRequest {
  * @public
  * @category Types
  * @interface SignInResponse
- * @description 로그인 응답 바디. WEB은 만료 시각만, APP은 토큰까지 포함.
+ * @description 로그인 응답 바디. WEB은 만료 시각·리다이렉트 URL만, APP은 토큰까지 포함.
  * @property {number} accessExpiredTime - AT 만료 시각 (epoch millis)
+ * @property {string} redirectUrl - 로그인/재발급 후 이동할 리다이렉트 URL (WEB·APP 공통)
  * @property {string} [accessToken] - Access Token (APP 전용)
  * @property {string} [refreshToken] - Refresh Token (APP 전용)
  */
 export interface SignInResponse {
   accessExpiredTime: number;
+  redirectUrl: string;
   accessToken?: string;
   refreshToken?: string;
 }

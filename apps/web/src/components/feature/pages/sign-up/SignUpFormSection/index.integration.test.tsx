@@ -6,10 +6,15 @@ import { server } from "@auth-econovation/api/mocks/server";
 import { SIGN_UP_API_PATH, SIGN_IN_API_PATH } from "@auth-econovation/api";
 import {
   MOCK_ACCESS_EXPIRED_TIME,
+  MOCK_REDIRECT_URL,
   errorResponse,
 } from "@auth-econovation/api/mocks";
 import LoginFormSection from "../../login/LoginFormSection";
 import SignUpFormSection from "./index";
+
+// 연속 여정의 로그인 성공 단계에서 호출되는 리다이렉트 헬퍼(window.location 전체 이동)를
+// 목으로 대체합니다. jsdom은 실제 내비게이션을 구현하지 않으므로 호출만 가로챕니다.
+vi.mock("@/lib/redirectToClient", () => ({ redirectToClient: vi.fn() }));
 
 /**
  * SignUpFormSection 통합 테스트.
@@ -236,14 +241,17 @@ describe("SignUpFormSection 통합 테스트", () => {
 describe("회원가입 → 로그인 연속 여정 (stateful MSW)", () => {
   it("가입한 계정으로 곧바로 로그인하면 자격 증명(clientId 포함)을 전송한다", async () => {
     // 가입은 stateful db 기본 핸들러로 실제 적재하고, 로그인 요청만 가로채 전송 내용을 검증합니다.
-    // (프론트는 로그인 성공 후 더 이상 리다이렉트하지 않으므로, 검증 지점은 '요청 전송'입니다.)
+    // (로그인 성공 시 리다이렉트는 목으로 대체했으므로, 이 테스트의 검증 지점은 '요청 전송'입니다.)
     let loginBody: unknown;
     let loginClientType: string | null = null;
     server.use(
       http.post(`*${SIGN_IN_API_PATH}`, async ({ request }) => {
         loginBody = await request.json();
         loginClientType = request.headers.get("Client-Type");
-        return HttpResponse.json({ accessExpiredTime: MOCK_ACCESS_EXPIRED_TIME });
+        return HttpResponse.json({
+          accessExpiredTime: MOCK_ACCESS_EXPIRED_TIME,
+          redirectUrl: MOCK_REDIRECT_URL,
+        });
       }),
     );
 
