@@ -10,5 +10,7 @@ OAuth2.0 Provider와 유사한 방식으로 동작하며, 사용자가 한 번 �
 **비즈니스 로직과 도메인 요구사항은 `domain-knowledge` skills를 참조하세요.**
 **개발 관련(빌드, 기술스택, 포매팅 등) 정보가 필요하다면 `development-knowledge` skills를 참조하세요.**
 **배포된 공식 문서 관련 정보가 필요하다면 `docs-knowledge` skills를 참조하세요.**
+**기술 문서를 작성하거나 개선·리뷰할 때는 `technical-writing` skill을 사용하세요.** 문서 유형 → 정보 구조 → 문장 다듬기 3단계로 전문 에이전트(`tw-type-classifier`, `tw-structure-reviewer`, `tw-sentence-polisher`)를 호출합니다. 기준 문서는 `context/technical-writing/`에 있습니다.
 
-console 워크스페이스에 대한 api관련 정보가 필요하다면 `context/v2_requirement.md` 를 확인하세요
+console 워크스페이스에 대한 api관련 정보가 필요하다면 `context/api-docs/console/index.md` 를 확인하세요
+web 워크스페이스에 대한 api관련 정보가 필요하다면 `context/api-docs/auth/index.md` 를 확인하세요
