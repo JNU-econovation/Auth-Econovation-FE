@@ -32,6 +32,7 @@ export default defineConfig({
             { text: "서비스 개요", link: "/developers/" },
             { text: "Quick Start", link: "/developers/quick-start" },
             { text: "SSO 동작 들여다보기", link: "/developers/sso-integration" },
+            { text: "API Gateway 동작 원리", link: "/developers/gateway" },
             { text: "클라이언트 예시", link: "/developers/client-examples" },
             { text: "API 명세", link: "/developers/api-reference" },
             { text: "FAQ / 트러블슈팅", link: "/developers/faq" },
