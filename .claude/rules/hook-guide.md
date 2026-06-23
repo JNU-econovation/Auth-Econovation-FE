@@ -1,6 +1,6 @@
 ---
 description: React hook 가이드라인입니다.
-paths: ["src/hooks/**/*.ts"]
+paths: ["apps/*/src/hooks/**/*.ts"]
 ---
 
 # react hook 가이드라인
@@ -26,15 +26,15 @@ e.g.
 ## feature 훅
 
 도메인 로직을 다루는 훅은 feature 훅으로 분류됩니다. feature 훅은 common 훅에서 도메인만 붙인 형태로 작성되어야 합니다.
-이에 따라 feature 훅은 /src/hooks/feature/ 디렉토리에, 사용된 common 훅끼리 디랙토리로 묶어서 작성되어야 합니다.
+이에 따라 feature 훅은 각 앱의 `apps/*/src/hooks/feature/` 디렉토리에, 사용된 common 훅끼리 디랙토리로 묶어서 작성되어야 합니다.
 
-아래와 같은 폴더 구조를 가질 수 있습니다.
+아래와 같은 폴더 구조를 가질 수 있습니다. (`apps/*`는 web·console 등 훅을 사용하는 앱을 의미합니다.)
 e.g.
 
-- src/hooks/common/useHaptic/index.ts
+- apps/*/src/hooks/common/useHaptic/index.ts
 
-- src/hooks/feature/haptic/useInvalidAccessHaptic/index.ts
-- src/hooks/feature/haptic/useSuccessPaymentHaptic/index.ts
+- apps/*/src/hooks/feature/haptic/useInvalidAccessHaptic/index.ts
+- apps/*/src/hooks/feature/haptic/useSuccessPaymentHaptic/index.ts
 
 ## checklist
 
@@ -42,4 +42,4 @@ e.g.
 - [ ] 훅의 이름과 동일한 디렉토리를 만들고, 그 안에 index.ts 파일을 작성하는 형태로 훅을 작성해야 합니다.
 - [ ] 도메인 로직을 다루는 훅은 feature 훅으로, 도메인 로직을 다루지 않는 훅은 common 훅으로 분류되어야 합니다.
 - [ ] feature 훅은 common 훅에서 도메인만 붙인 형태로 작성되어야 합니다.
-- [ ] feature 훅은 /src/hooks/feature/ 디렉토리에, 사용된 common 훅끼리 디랙토리로 묶어서 작성되어야 합니다.
+- [ ] feature 훅은 각 앱의 `apps/*/src/hooks/feature/` 디렉토리에, 사용된 common 훅끼리 디랙토리로 묶어서 작성되어야 합니다.

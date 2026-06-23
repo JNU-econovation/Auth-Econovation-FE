@@ -1,25 +1,25 @@
 ---
 description: API 요청과 관련된 가이드라인입니다.
 paths:
-  - "src/api/**/*"
+  - "packages/api/src/**/*"
 ---
 
 # api 가이드라인
 
 ## 디랙토리 구조
 
-api 로직은 `src/api` 디렉토리에 작성되어야 합니다. API 요청과 관련된 모든 로직은 이 디렉토리에 위치해야 합니다.
+api 로직은 공유 패키지 `packages/api/src` (`@auth-econovation/api`) 디렉토리에 작성되어야 합니다. API 요청과 관련된 모든 로직은 이 패키지에 위치하며, web·console 등 각 앱은 `@auth-econovation/api`를 import 하여 사용합니다.
 
 restful API 요청 엔드포인트와 /api/... 디렉토리 위치와 일치해야합니다.
 
-e.g. `POST /api/auth/signup` → `src/api/auth/signup/index.ts`
+e.g. `POST /api/auth/signup` → `packages/api/src/auth/signup/index.ts`
 
 만약 API 요청과 관련된 추가적인 유틸리티 함수나 타입이 필요한 경우, \_를 붙인 디랙토리를 만들고 그 안에 작성할 수 있습니다.
 
 e.g.
 
-- 유틸 함수가 필요하다면 `src/api/_utils/index.ts` 에 작성할 수 있습니다.
-- instance가 필요하다면 `src/api/_instances/[instance-name]/index.ts` 에 작성할 수 있습니다.
+- 유틸 함수가 필요하다면 `packages/api/src/_utils/index.ts` 에 작성할 수 있습니다.
+- instance가 필요하다면 `packages/api/src/_instances/[instance-name]/index.ts` 에 작성할 수 있습니다.
 
 ## API 요청 로직
 

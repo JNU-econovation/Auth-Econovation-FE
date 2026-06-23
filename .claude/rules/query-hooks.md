@@ -1,7 +1,7 @@
 ---
 description: React Query를 활용한 API 통신을 위한 커스텀 훅 작성 가이드라인입니다.
 paths:
-  - "src/hooks/features/query/**/*"
+  - "apps/*/src/hooks/features/query/**/*"
 ---
 
 # query hooks 가이드라인
@@ -12,21 +12,23 @@ React Query를 활용한 API 통신을 위한 커스텀 훅 작성 가이드라�
 
 ## 디랙토리 구조
 
-- `src/hooks/features/` 디렉토리에 API 요청과 관련된 커스텀 훅을 작성합니다.
-- tanstack-query 를 래핑한 커스텀 훅들은 `src/hooks/features/query/` 디렉토리에 작성합니다.
-- query 훅은 `src/hooks/features/query/querys/` 디렉토리에 작성합니다.
-- mutation 훅은 `src/hooks/features/query/mutations/` 디렉토리에 작성합니다.
-- prefetch 훅은 `src/hooks/features/query/preFetchs/` 디렉토리에 작성합니다.
-- suspenseQuery 훅은 `src/hooks/features/query/suspenseQuerys/` 디렉토리에 작성합니다.
+`apps/*`는 web·console 등 훅을 사용하는 각 앱을 의미합니다.
+
+- `apps/*/src/hooks/features/` 디렉토리에 API 요청과 관련된 커스텀 훅을 작성합니다.
+- tanstack-query 를 래핑한 커스텀 훅들은 `apps/*/src/hooks/features/query/` 디렉토리에 작성합니다.
+- query 훅은 `apps/*/src/hooks/features/query/querys/` 디렉토리에 작성합니다.
+- mutation 훅은 `apps/*/src/hooks/features/query/mutations/` 디렉토리에 작성합니다.
+- prefetch 훅은 `apps/*/src/hooks/features/query/preFetchs/` 디렉토리에 작성합니다.
+- suspenseQuery 훅은 `apps/*/src/hooks/features/query/suspenseQuerys/` 디렉토리에 작성합니다.
 
 ### checklist
 
-- [ ] API 요청과 관련된 커스텀 훅은 `src/hooks/features/query/` 디렉토리에 작성되어야 합니다.
+- [ ] API 요청과 관련된 커스텀 훅은 `apps/*/src/hooks/features/query/` 디렉토리에 작성되어야 합니다.
 - [ ] 커스텀 훅은 `use` 접두어로 시작하는 명명 규칙을 따릅니다 (예: `useSignUp`).
-- [ ] query 훅은 `src/hooks/features/query/querys/` 디렉토리에 작성되어야 합니다.
-- [ ] mutation 훅은 `src/hooks/features/query/mutations/` 디렉토리에 작성되어야 합니다.
-- [ ] prefetch 훅은 `src/hooks/features/query/preFetchs/` 디렉토리에 작성되어야 합니다.
-- [ ] suspenseQuery 훅은 `src/hooks/features/query/suspenseQuerys/` 디렉토리에 작성되어야 합니다.
+- [ ] query 훅은 `apps/*/src/hooks/features/query/querys/` 디렉토리에 작성되어야 합니다.
+- [ ] mutation 훅은 `apps/*/src/hooks/features/query/mutations/` 디렉토리에 작성되어야 합니다.
+- [ ] prefetch 훅은 `apps/*/src/hooks/features/query/preFetchs/` 디렉토리에 작성되어야 합니다.
+- [ ] suspenseQuery 훅은 `apps/*/src/hooks/features/query/suspenseQuerys/` 디렉토리에 작성되어야 합니다.
 
 ## tanstack-query 커스텀 훅 작성 규칙
 
@@ -35,10 +37,10 @@ React Query를 활용한 API 통신을 위한 커스텀 훅 작성 가이드라�
 - 훅의 인자의 경우 interface로 정의합니다.
 
 ```typescript
-// src/hooks/features/query/querys/useBasesDetailQuery/index.ts
-import { BASES_DETAIL_API_PATH, getBasesDetailApi } from "api";
+// apps/*/src/hooks/features/query/querys/useBasesDetailQuery/index.ts
+import { BASES_DETAIL_API_PATH, getBasesDetailApi } from "@auth-econovation/api";
 import { useQuery } from "@tanstack/react-query";
-import authenticatedApi from "@api/_instances/authenticatedApi";
+import authenticatedApi from "@auth-econovation/api/_instances/authenticatedApi";
 
 interface BasesDetailQueryProps {
   mountainId: string;
