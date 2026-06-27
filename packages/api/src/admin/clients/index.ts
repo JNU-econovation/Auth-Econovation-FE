@@ -74,33 +74,6 @@ export const postAdminClientApi = async (
 /**
  * @public
  * @category Types
- * @description 클라이언트 목록 조회 응답 타입(전체 클라이언트 배열).
- *
- * ⚠️ 백엔드 목록 조회 엔드포인트는 아직 명세 미확정입니다(현재 단건 조회만 계약에 존재).
- * 콘솔 목록 화면을 위해 `GET /api/v1/admin/clients`가 전체 배열을 반환한다고 가정하며,
- * 실제 계약(페이지네이션 등) 확정 시 이 타입과 `getAdminClientsApi`를 조정합니다.
- */
-export type GetAdminClientsApiResponse = AdminClient[];
-
-/**
- * @public
- * @category AdminClients
- * @description 등록된 OAuth 클라이언트 목록을 조회합니다. `ADMIN` 이상 권한 필요.
- * @returns 클라이언트 배열(clientId, clientName, redirectUris)
- * @example
- * const clients = await getAdminClientsApi();
- */
-export const getAdminClientsApi =
-  async (): Promise<GetAdminClientsApiResponse> => {
-    const response = await apiClient.get<GetAdminClientsApiResponse>(
-      ADMIN_CLIENTS_API_PATH,
-    );
-    return response.data;
-  };
-
-/**
- * @public
- * @category Types
  * @description 클라이언트 단건 조회 응답 타입
  */
 export type GetAdminClientApiResponse = AdminClient;

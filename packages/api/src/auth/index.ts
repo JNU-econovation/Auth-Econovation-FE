@@ -6,5 +6,3 @@ export { signInApi, SIGN_IN_API_PATH } from "./v1/login";
 export { logoutApi, LOGOUT_API_PATH } from "./v1/logout";
 export { reissueApi, REISSUE_API_PATH } from "./v1/reissue";
 export { signUpApi, SIGN_UP_API_PATH } from "./v1/signup";
-export { getMeApi, ME_API_PATH } from "./v1/me";
-export type { MeResponse } from "./v1/me";

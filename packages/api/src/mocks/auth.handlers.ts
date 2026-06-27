@@ -10,14 +10,12 @@ import {
   MOCK_ACCESS_TOKEN,
   MOCK_REDIRECT_URL,
   MOCK_REFRESH_TOKEN,
-  ME_API_PATH,
   REISSUE_API_PATH,
   SIGN_IN_API_PATH,
   SIGN_UP_API_PATH,
   LOGOUT_API_PATH,
 } from "./constants";
-import { getActorMemberId } from "./actor";
-import { db, toAdminMemberView } from "./db";
+import { db } from "./db";
 import { errorResponse } from "./errors";
 
 /**
@@ -67,23 +65,6 @@ const webTokenBody: SignInResponse = {
 };
 
 export const authHandlers = [
-  /**
-   * GET /api/v1/auth/me — 현재 로그인 사용자 조회(인증 가드의 기준 호출).
-   *
-   * 실제 백엔드는 AT 쿠키(JWT)에서 신원을 추출하지만, 모킹 환경엔 JWT 검증이 없으므로
-   * `X-Mock-Member-Id` 헤더(미지정 시 1)로 요청자를 식별합니다(`./actor` 폴백 철학).
-   * 폴백 덕에 happy path는 인증된 SUPER_ADMIN으로 동작하며, 미인증(401) 케이스는
-   * 테스트에서 `server.use(...)`로 이 핸들러를 덮어써 시뮬레이션합니다.
-   */
-  http.get(`*${ME_API_PATH}`, ({ request }) => {
-    const memberId = getActorMemberId(request);
-    const member = db.members.find((m) => m.memberId === memberId);
-    if (!member) {
-      return errorResponse("INVALID_CREDENTIALS");
-    }
-    return HttpResponse.json(toAdminMemberView(member));
-  }),
-
   /**
    * POST /api/v1/auth/signup — 회원 가입.
    * 201(바디 없음) / 400 VALIDATION_FAILED·INVALID_PASSWORD_POLICY / 409 MEMBER_ALREADY_EXISTS.
