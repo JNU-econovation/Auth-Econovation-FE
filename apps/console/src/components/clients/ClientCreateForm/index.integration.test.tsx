@@ -4,7 +4,8 @@ import ClientCreateForm from "./index";
 
 /**
  * 클라이언트 등록 폼 핵심 흐름 통합 테스트.
- * 공유 MSW 어드민 핸들러(@auth-econovation/api/mocks)에 실제 요청으로 검증합니다.
+ * 공유 MSW 셀프 클라이언트 핸들러(@auth-econovation/api/mocks, `POST /api/v1/clients`)에
+ * 실제 요청으로 검증합니다. 발급된 clientId·clientSecret이 모달에 노출됩니다.
  */
 describe("ClientCreateForm (통합)", () => {
   const typeName = (user: ReturnType<typeof renderWithProviders>["user"], v: string) =>

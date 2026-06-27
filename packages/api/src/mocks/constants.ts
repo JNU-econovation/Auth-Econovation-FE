@@ -13,14 +13,16 @@ export { REISSUE_API_PATH } from "../auth/v1/reissue";
 export { LOGOUT_API_PATH } from "../auth/v1/logout";
 export { ME_API_PATH } from "../auth/v1/me";
 
+// API 레이어가 존재하는 엔드포인트는 단일 진실을 위해 그 경로 상수를 재노출합니다.
+export { ADMIN_ROUTES_API_PATH } from "../admin/routes";
+export { CLIENTS_API_PATH } from "../clients";
+export { MEMBERS_BATCH_API_PATH } from "../members";
+
 /** 어드민 클라이언트 관리 베이스 경로 (`/api/v1/admin/clients`) */
 export const ADMIN_CLIENTS_API_PATH = "/api/v1/admin/clients";
 
 /** 어드민 회원 관리 베이스 경로 (`/api/v1/admin/members`) */
 export const ADMIN_MEMBERS_API_PATH = "/api/v1/admin/members";
-
-/** 외부 연동 회원 정보 조회 경로 (`/api/v1/members/batch`) */
-export const MEMBERS_BATCH_API_PATH = "/api/v1/members/batch";
 
 /**
  * 핸들러가 발급하는 모의 토큰 값.

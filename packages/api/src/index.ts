@@ -7,5 +7,5 @@
  * - MSW mock(handlers/db/...)은 번들 분리를 위해 `@auth-econovation/api/mocks`로 분리.
  * - 어드민 API(clients/members)는 `@auth-econovation/api/admin`로 분리(콘솔 핵심).
  */
-export { apiClient } from "./client";
+export { apiClient, setAuthTokenGetter } from "./client";
 export * from "./auth";

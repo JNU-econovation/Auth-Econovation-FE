@@ -27,4 +27,23 @@ export const env = {
     import.meta.env.VITE_SSO_LOGIN_URL,
     "VITE_SSO_LOGIN_URL",
   ),
+  /**
+   * SSO 로그인 페이지에 전달할 콘솔의 `client-type` 쿼리 값(소문자 `web`|`app`).
+   *
+   * 콘솔은 인증 도메인과 다른 오리진의 SPA라 쿠키 세션을 공유받지 못합니다. 그래서
+   * 로그인 후 토큰을 리다이렉트 URL 쿼리로 받는 `app` 흐름을 사용합니다
+   * (`captureRedirectTokens`). 즉 운영에서도 보통 `app`입니다.
+   */
+  ssoClientType: requireEnv(
+    import.meta.env.VITE_SSO_CLIENT_TYPE,
+    "VITE_SSO_CLIENT_TYPE",
+  ),
+  /**
+   * SSO에 콘솔을 식별시키는 `client-id`. 로그인 성공 시 백엔드가 이 값으로 콘솔의
+   * 콜백 주소를 결정해 토큰과 함께 되돌려 보냅니다(`redirectToLogin`이 쿼리로 첨부).
+   */
+  ssoClientId: requireEnv(
+    import.meta.env.VITE_SSO_CLIENT_ID,
+    "VITE_SSO_CLIENT_ID",
+  ),
 } as const;

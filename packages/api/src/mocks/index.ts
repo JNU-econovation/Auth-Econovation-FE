@@ -16,10 +16,15 @@ export {
   db,
   resetDb,
   nextClientId,
+  nextClientSecret,
+  nextRouteId,
   toAdminMemberView,
   toPublicMemberView,
+  toRouteView,
+  toAdminRouteView,
+  toSelfClientView,
 } from "./db";
-export type { Role, MemberRecord, ClientRecord } from "./db";
+export type { Role, MemberRecord, ClientRecord, RouteRecord } from "./db";
 
 export { errorResponse, ERROR_CATALOG } from "./errors";
 export type { ErrorCode, SpecApiError } from "./errors";

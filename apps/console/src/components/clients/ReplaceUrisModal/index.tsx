@@ -1,14 +1,19 @@
 import { useRef, useState } from "react";
 import { Banner, Button, Modal, useToast } from "@auth-econovation/ui";
-import usePutClientRedirectUris from "@/hooks/features/query/mutations/usePutClientRedirectUris";
+import type { ClientRoute } from "@auth-econovation/api/clients";
+import usePutSelfClient from "@/hooks/features/query/mutations/usePutSelfClient";
 import { resolveApiErrorMessage } from "@/lib/resolveApiError";
 import { isValidUrl } from "@/lib/validators";
 import { inputClass } from "@/lib/inputClass";
 
 interface ReplaceUrisModalProps {
   clientId: string;
+  /** 현재 클라이언트 이름(전체 표현 교체 시 보존 전송). */
+  clientName: string;
   /** 현재 등록된 redirect URI 목록(diff 기준) */
   current: string[];
+  /** 연결된 Gateway 라우트(전체 표현 교체 시 함께 보내 유지, 없으면 null) */
+  route: ClientRoute | null;
   onClose: () => void;
   /** 교체 성공 시 호출(부모가 모달 닫기·토스트 처리) */
   onReplaced: () => void;
@@ -25,15 +30,21 @@ const DIFF_ROW_CLASS =
 /**
  * redirect URI 전체 교체 모달. 편집(edit) → 변경 내용 확인(diff) 2단계로 진행하며,
  * 삭제가 포함된 파괴적 교체는 경고와 danger 액션으로 강조합니다.
+ *
+ * 셀프 클라이언트 수정은 전체 표현을 교체(`PUT /api/v1/clients/{clientId}`)하므로,
+ * redirect URI만 바꿔도 clientName과 연결 라우트(pathPrefix·upstreamUrl)를 함께 보내
+ * 의도치 않은 변경/라우트 삭제를 막습니다.
  */
 const ReplaceUrisModal = ({
   clientId,
+  clientName,
   current,
+  route,
   onClose,
   onReplaced,
 }: ReplaceUrisModalProps) => {
   const toast = useToast();
-  const replaceUris = usePutClientRedirectUris();
+  const replaceUris = usePutSelfClient();
   const [step, setStep] = useState<"edit" | "diff">("edit");
   const [rows, setRows] = useState<EditRow[]>(
     current.length
@@ -72,7 +83,17 @@ const ReplaceUrisModal = ({
 
   const confirm = () => {
     replaceUris.mutate(
-      { clientId, uris: next },
+      {
+        clientId,
+        data: {
+          clientName,
+          redirectUris: next,
+          // 라우트가 있으면 함께 보내 유지(생략 시 서버가 라우트를 삭제함)
+          ...(route
+            ? { pathPrefix: route.pathPrefix, upstreamUrl: route.upstreamUrl }
+            : {}),
+        },
+      },
       {
         onSuccess: onReplaced,
         onError: (err) =>
@@ -88,7 +109,7 @@ const ReplaceUrisModal = ({
   if (step === "edit") {
     return (
       <Modal
-        title="redirect URI 전체 교체"
+        title="redirect URI 수정"
         onClose={onClose}
         wide
         footer={

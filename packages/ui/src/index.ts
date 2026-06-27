@@ -30,6 +30,7 @@ export { default as Skeleton, TableSkeleton } from "./ui/Skeleton";
 export { default as EmptyState } from "./ui/EmptyState";
 export { default as ErrorState } from "./ui/ErrorState";
 export { default as LogoMark } from "./ui/LogoMark";
+export { default as InfoHint } from "./ui/InfoHint";
 
 // 아이콘 (stroke 기반, currentColor)
 export {
@@ -40,6 +41,7 @@ export {
   ChevronDownIcon,
   UsersIcon,
   GridIcon,
+  InfoIcon,
 } from "./icons";
 
 // 레이아웃

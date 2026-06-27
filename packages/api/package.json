@@ -6,6 +6,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./admin": "./src/admin/index.ts",
+    "./clients": "./src/clients/index.ts",
+    "./members": "./src/members/index.ts",
     "./mocks": "./src/mocks/index.ts",
     "./mocks/server": "./src/mocks/server.ts",
     "./mocks/browser": "./src/mocks/browser.ts"

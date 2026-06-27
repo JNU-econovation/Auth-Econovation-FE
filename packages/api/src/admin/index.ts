@@ -7,3 +7,4 @@
 export * from "./types";
 export * from "./clients";
 export * from "./members";
+export * from "./routes";

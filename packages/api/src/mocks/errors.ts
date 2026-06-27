@@ -25,6 +25,22 @@ export const ERROR_CATALOG = {
     status: 400,
     message: "유효하지 않은 역할입니다. 허용: USER, ADMIN, SUPER_ADMIN",
   },
+  ROUTE_UPSTREAM_INVALID: {
+    status: 400,
+    message: "업스트림 URL이 올바르지 않습니다.",
+  },
+  ROUTE_NAMESPACE_INVALID: {
+    status: 400,
+    message: "pathPrefix는 /api/{namespace} 형태여야 합니다.",
+  },
+  ROUTE_NAMESPACE_CHANGE_DENIED: {
+    status: 400,
+    message: "라우트 네임스페이스는 변경할 수 없습니다.",
+  },
+  AUTH_UNAUTHORIZED: {
+    status: 401,
+    message: "인증되지 않은 요청입니다.",
+  },
   INVALID_CREDENTIALS: {
     status: 401,
     message: "아이디 또는 비밀번호가 올바르지 않습니다.",
@@ -42,7 +58,20 @@ export const ERROR_CATALOG = {
     status: 403,
     message: "본인의 역할은 변경할 수 없습니다.",
   },
+  ROUTE_PROTECTED: {
+    status: 403,
+    message: "보호 경로는 수정하거나 삭제할 수 없습니다.",
+  },
+  ROUTE_NAMESPACE_TAKEN: {
+    status: 403,
+    message: "이미 다른 회원이 선점한 네임스페이스입니다.",
+  },
   NOT_FOUND: { status: 404, message: "존재하지 않는 리소스입니다." },
+  ROUTE_NOT_FOUND: { status: 404, message: "존재하지 않는 라우트입니다." },
+  CLIENT_NOT_FOUND: {
+    status: 404,
+    message: "존재하지 않는 클라이언트입니다.",
+  },
   MEMBER_ALREADY_EXISTS: {
     status: 409,
     message: "이미 사용 중인 loginId입니다.",
@@ -51,9 +80,21 @@ export const ERROR_CATALOG = {
     status: 409,
     message: "이미 사용 중인 clientName입니다.",
   },
+  DUPLICATE_CLIENT_NAME: {
+    status: 409,
+    message: "이미 사용 중인 clientName입니다.",
+  },
+  ROUTE_PATH_CONFLICT: {
+    status: 409,
+    message: "이미 사용 중인 pathPrefix입니다.",
+  },
   LAST_SUPER_ADMIN_CANNOT_BE_DEMOTED: {
     status: 409,
     message: "마지막 SUPER_ADMIN은 해제할 수 없습니다.",
+  },
+  CLIENT_LIMIT_EXCEEDED: {
+    status: 422,
+    message: "회원당 클라이언트는 최대 5개까지 등록할 수 있습니다.",
   },
 } as const;
 
