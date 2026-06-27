@@ -3,7 +3,9 @@ import { MOCK_REDIRECT_URL } from "./constants";
 import { authHandlers } from "./auth.handlers";
 import { adminClientsHandlers } from "./adminClients.handlers";
 import { adminMembersHandlers } from "./adminMembers.handlers";
+import { adminRoutesHandlers } from "./adminRoutes.handlers";
 import { membersHandlers } from "./members.handlers";
+import { selfClientsHandlers } from "./selfClients.handlers";
 
 /**
  * MSW 핸들러 집계.
@@ -23,7 +25,9 @@ export const handlers = [
   ...authHandlers,
   ...adminClientsHandlers,
   ...adminMembersHandlers,
+  ...adminRoutesHandlers,
   ...membersHandlers,
+  ...selfClientsHandlers,
 ];
 
 /**

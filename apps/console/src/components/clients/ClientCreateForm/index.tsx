@@ -6,10 +6,12 @@ import {
   Card,
   CardBody,
   IdChip,
+  InfoHint,
   Modal,
   useToast,
 } from "@auth-econovation/ui";
-import usePostClient from "@/hooks/features/query/mutations/usePostClient";
+import type { PostClientApiResponse } from "@auth-econovation/api/clients";
+import usePostSelfClient from "@/hooks/features/query/mutations/usePostSelfClient";
 import {
   resolveApiErrorCode,
   resolveApiErrorMessage,
@@ -23,6 +25,20 @@ interface UriRow {
   error: string | null;
   warn: string | null;
 }
+
+/** pathPrefix가 `/api/{namespace}` 형태인지(서버 검증 규칙과 정렬). */
+const isValidNamespacePrefix = (value: string): boolean =>
+  /^\/api\/[A-Za-z0-9._~-]+(\/.*)?$/.test(value);
+
+/** 서버가 라우트 필드 단위로 내려주는 에러 코드(필드 하단에 메시지 표시). */
+const ROUTE_ERROR_CODES = new Set([
+  "ROUTE_NAMESPACE_INVALID",
+  "ROUTE_UPSTREAM_INVALID",
+  "ROUTE_PATH_CONFLICT",
+  "ROUTE_NAMESPACE_TAKEN",
+  "ROUTE_PROTECTED",
+  "ROUTE_NAMESPACE_CHANGE_DENIED",
+]);
 
 const validateName = (value: string): string | null =>
   value.trim() === "" ? "클라이언트 이름을 입력하세요." : null;
@@ -39,13 +55,14 @@ const validateUri = (
 };
 
 /**
- * 클라이언트 등록 폼. 이름 + 동적 redirect URI 리스트를 입력받아 등록하고,
- * 성공 시 발급된 clientId를 모달로 안내한 뒤 상세 페이지로 이동합니다.
+ * 클라이언트 등록 폼. 이름 + 동적 redirect URI 리스트에 더해 선택적으로 Gateway 라우트
+ * (pathPrefix·upstreamUrl)를 함께 입력받아 셀프 등록(`POST /api/v1/clients`)하고,
+ * 성공 시 1회 노출되는 clientId·clientSecret을 모달로 안내한 뒤 상세 페이지로 이동합니다.
  */
 const ClientCreateForm = () => {
   const navigate = useNavigate();
   const toast = useToast();
-  const createClient = usePostClient();
+  const createClient = usePostSelfClient();
 
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState<string | null>(null);
@@ -53,7 +70,10 @@ const ClientCreateForm = () => {
     { id: 1, value: "", error: null, warn: null },
   ]);
   const [listError, setListError] = useState<string | null>(null);
-  const [createdClientId, setCreatedClientId] = useState<string | null>(null);
+  const [pathPrefix, setPathPrefix] = useState("");
+  const [upstreamUrl, setUpstreamUrl] = useState("");
+  const [routeError, setRouteError] = useState<string | null>(null);
+  const [created, setCreated] = useState<PostClientApiResponse | null>(null);
   const nextId = useRef(2);
 
   const patchUri = (id: number, patch: Partial<UriRow>) =>
@@ -69,17 +89,37 @@ const ClientCreateForm = () => {
       rows.length > 1 ? rows.filter((r) => r.id !== id) : rows,
     );
 
+  /** pathPrefix·upstreamUrl은 "둘 다 입력 또는 둘 다 비움"만 허용합니다. */
+  const validateRoute = (): string | null => {
+    const path = pathPrefix.trim();
+    const upstream = upstreamUrl.trim();
+    if (!path && !upstream) return null;
+    if (!path || !upstream)
+      return "pathPrefix와 upstreamUrl은 함께 입력해야 합니다.";
+    if (!isValidNamespacePrefix(path))
+      return "pathPrefix는 /api/{namespace} 형태여야 합니다.";
+    if (!isValidUrl(upstream))
+      return "upstreamUrl이 올바른 URL 형식이 아닙니다.";
+    return null;
+  };
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const nErr = validateName(name);
     setNameError(nErr);
     let bad = nErr !== null;
+
     const checked = uris.map((row) => {
       const { error, warn } = validateUri(row.value);
       if (error) bad = true;
       return { ...row, error, warn };
     });
     setUris(checked);
+
+    const rErr = validateRoute();
+    setRouteError(rErr);
+    if (rErr) bad = true;
+
     if (bad) return;
 
     // 빈 행 제거 + 중복 합치기
@@ -92,16 +132,26 @@ const ClientCreateForm = () => {
     }
     setListError(null);
 
+    const path = pathPrefix.trim();
+    const upstream = upstreamUrl.trim();
+    const hasRoute = path !== "" && upstream !== "";
+
     createClient.mutate(
-      { clientName: name.trim(), redirectUris },
       {
-        onSuccess: ({ clientId }) => setCreatedClientId(clientId),
+        clientName: name.trim(),
+        redirectUris,
+        ...(hasRoute ? { pathPrefix: path, upstreamUrl: upstream } : {}),
+      },
+      {
+        onSuccess: (response) => setCreated(response),
         onError: (err) => {
           const code = resolveApiErrorCode(err);
-          if (code === "DUPLICATE_RESOURCE") {
+          if (code === "DUPLICATE_CLIENT_NAME") {
             setNameError("이미 사용 중인 이름입니다. 다른 이름을 입력하세요.");
           } else if (code === "REDIRECT_URI_REQUIRED") {
             setListError("redirect URI를 1개 이상 입력하세요.");
+          } else if (code && ROUTE_ERROR_CODES.has(code)) {
+            setRouteError(resolveApiErrorMessage(err));
           } else {
             toast(
               "error",
@@ -197,6 +247,68 @@ const ClientCreateForm = () => {
               ) : null}
             </div>
 
+            {/* pathPrefix (선택) */}
+            <div className="mb-4">
+              <label
+                htmlFor="path-prefix"
+                className="mb-2 flex w-fit items-center gap-1 text-sm font-medium"
+              >
+                pathPrefix
+                <InfoHint label="pathPrefix 설명">
+                  <strong className="mb-1 block">pathPrefix</strong>
+                  게이트웨이가 이 서비스로 요청을 라우팅할 때 사용하는 경로
+                  접두사입니다. <code>/api/{"{namespace}"}</code> 형태로 시작하는
+                  요청을 이 클라이언트로 전달합니다.
+                </InfoHint>
+              </label>
+              <input
+                id="path-prefix"
+                className={inputClass({ mono: true, error: !!routeError })}
+                placeholder="/api/econo-spa"
+                value={pathPrefix}
+                onChange={(e) => {
+                  setPathPrefix(e.target.value);
+                  setRouteError(null);
+                }}
+              />
+              <div className="mt-2 text-xs text-ink-soft">
+                선택 입력. 게이트웨이 라우팅 경로 접두사입니다.
+              </div>
+            </div>
+
+            {/* upstreamUrl (선택) */}
+            <div className="mb-4">
+              <label
+                htmlFor="upstream-url"
+                className="mb-2 flex w-fit items-center gap-1 text-sm font-medium"
+              >
+                upstreamUrl
+                <InfoHint label="upstreamUrl 설명">
+                  <strong className="mb-1 block">upstreamUrl</strong>
+                  요청이 실제로 전달되는 서비스(오리진) 주소입니다. 게이트웨이가
+                  받은 요청을 이 URL로 프록시해 전달합니다.
+                </InfoHint>
+              </label>
+              <input
+                id="upstream-url"
+                className={inputClass({ mono: true, error: !!routeError })}
+                placeholder="https://app.econo.com"
+                value={upstreamUrl}
+                onChange={(e) => {
+                  setUpstreamUrl(e.target.value);
+                  setRouteError(null);
+                }}
+              />
+              {routeError ? (
+                <div className="mt-2 text-xs text-danger">{routeError}</div>
+              ) : (
+                <div className="mt-2 text-xs text-ink-soft">
+                  선택 입력. pathPrefix와 함께 입력하면 게이트웨이 라우트를 함께
+                  등록합니다.
+                </div>
+              )}
+            </div>
+
             {/* 안내 배너 */}
             <div className="my-6">
               <Banner kind="warning">
@@ -227,23 +339,40 @@ const ClientCreateForm = () => {
         </CardBody>
       </Card>
 
-      {createdClientId ? (
+      {created ? (
         <Modal
           title="클라이언트가 등록되었습니다"
-          onClose={() => navigate(`/clients/${createdClientId}`)}
+          onClose={() => navigate(`/clients/${created.clientId}`)}
           footer={
             <Button
               variant="primary"
-              onClick={() => navigate(`/clients/${createdClientId}`)}
+              onClick={() => navigate(`/clients/${created.clientId}`)}
             >
               상세 페이지로 이동
             </Button>
           }
         >
-          <p className="text-ink-soft">
-            발급된 clientId를 연동 서비스 환경 변수에 등록하세요.
-          </p>
-          <IdChip value={createdClientId} />
+          <Banner kind="warning">
+            clientSecret은 지금만 확인할 수 있습니다. 닫기 전에 안전한 곳에
+            보관하세요.
+          </Banner>
+          <div className="flex flex-col gap-1">
+            <span className="text-xs text-ink-soft">clientId</span>
+            <IdChip value={created.clientId} />
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-xs text-ink-soft">clientSecret</span>
+            <IdChip value={created.clientSecret} />
+          </div>
+          {created.routeId ? (
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-ink-soft">
+                게이트웨이 라우트
+              </span>
+              <IdChip value={created.pathPrefix ?? ""} copy={false} />
+              <IdChip value={created.upstreamUrl ?? ""} copy={false} />
+            </div>
+          ) : null}
         </Modal>
       ) : null}
     </>
