@@ -1,4 +1,5 @@
 import { env } from "@/env";
+import { buildLoginUrl } from "@/lib/buildLoginUrl";
 
 /**
  * @description 현재 사용자를 SSO 로그인 페이지(`env.ssoLoginUrl`)로 이동시킵니다.
@@ -11,23 +12,20 @@ import { env } from "@/env";
  * 로그인 후 엉뚱한 곳으로 되돌아갑니다. 추가로 현재 절대 경로를 `returnTo`로 보존합니다
  * (SSO 측이 지원할 경우 활용).
  *
+ * URL 조립은 순수 함수 `buildLoginUrl`에 위임하고(node 단위 테스트 대상), 이 함수는
+ * `window.location` 읽기·이동(부수효과)만 담당합니다.
+ *
  * 라우터 내비게이션이 아닌 `window.location` 전체 이동을 사용하는 이유:
  * 로그인 페이지는 콘솔 SPA 외부(다른 오리진)일 수 있기 때문입니다.
  */
 export const redirectToLogin = (): void => {
   const returnTo = `${window.location.origin}${window.location.pathname}${window.location.search}`;
 
-  let target = env.ssoLoginUrl;
-  try {
-    const url = new URL(env.ssoLoginUrl);
-    // 로그인 페이지(web)가 읽는 키와 정확히 일치시킵니다(소문자 kebab-case).
-    url.searchParams.set("client-type", env.ssoClientType);
-    url.searchParams.set("client-id", env.ssoClientId);
-    url.searchParams.set("returnTo", returnTo);
-    target = url.toString();
-  } catch {
-    // ssoLoginUrl이 절대 URL이 아니면(상대 경로 등) 그대로 이동합니다.
-  }
+  const target = buildLoginUrl(env.ssoLoginUrl, {
+    clientType: env.ssoClientType,
+    clientId: env.ssoClientId,
+    returnTo,
+  });
 
   window.location.assign(target);
 };
