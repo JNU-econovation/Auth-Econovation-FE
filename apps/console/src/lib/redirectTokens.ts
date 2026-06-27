@@ -80,7 +80,7 @@ export function storeRedirectTokens(tokens: RedirectTokens): void {
  *
  * 콘솔이 APP 리다이렉트 대상(`/?accessToken=...&refreshToken=...&accessExpiredTime=...`)으로
  * 진입하면, 토큰을 저장한 뒤 토큰 쿼리를 제거한 URL로 히스토리 항목을 교체합니다. 이로써 토큰이
- * 주소창·뒤로가기 히스토리·(미인증 시 `redirectToLogin`이 보존하는) `returnTo`에 남지 않습니다.
+ * 주소창·뒤로가기 히스토리에 남지 않습니다.
  *
  * React 렌더·effect보다 먼저 1회 실행되도록 진입점(`main.tsx`)에서 호출합니다.
  * 토큰 쿼리가 없으면 아무 동작도 하지 않습니다.
