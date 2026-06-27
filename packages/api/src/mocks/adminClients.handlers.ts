@@ -78,20 +78,6 @@ export const adminClientsHandlers = [
   }),
 
   /**
-   * GET /api/v1/admin/clients — 등록된 클라이언트 전체 목록.
-   * 200 [{clientId, clientName, redirectUris}] / 403 FORBIDDEN.
-   *
-   * ⚠️ 백엔드 목록 엔드포인트는 명세 미확정(단건 조회만 계약 존재). 콘솔 목록 화면을 위한
-   * 모의 구현으로, 전체 배열을 반환합니다. `:clientId` 핸들러보다 먼저 등록해 경로 충돌을 피합니다.
-   */
-  http.get(`*${ADMIN_CLIENTS_API_PATH}`, ({ request }) => {
-    if (!hasRoleAtLeast(getActorRole(request), "ADMIN")) {
-      return errorResponse("FORBIDDEN");
-    }
-    return HttpResponse.json(db.clients);
-  }),
-
-  /**
    * GET /api/v1/admin/clients/{clientId} — 클라이언트 정보 + redirectUri 목록.
    * 200 / 403 FORBIDDEN / 404 NOT_FOUND(미존재).
    */

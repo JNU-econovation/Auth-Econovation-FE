@@ -4,8 +4,9 @@ import { redirectToLogin } from "@/lib/redirectToLogin";
 /**
  * 권한 부족 안내 화면.
  *
- * 로그인은 되어 있으나 콘솔 접근 권한이 없는 경우(`USER` 역할 또는 admin API 403)에
- * 콘솔 본문 대신 표시합니다(v2 명세 §141 "USER: 콘솔 접근 불가 → 안내 페이지").
+ * 로그인은 되어 있으나 콘솔 접근 권한이 없는 경우(admin API 403)에 콘솔 본문 대신
+ * 표시합니다(v2 명세 §141 "USER: 콘솔 접근 불가 → 안내 페이지"). API 요청이 403으로
+ * 실패하면 (`queryClient` 전역 핸들러 → `authStatus`) `AuthGate`가 이 화면을 띄웁니다.
  * 다른(관리자) 계정으로 다시 로그인할 수 있도록 SSO 로그인 진입점을 제공합니다.
  */
 const ForbiddenView = () => (

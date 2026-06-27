@@ -11,7 +11,6 @@ export { SIGN_UP_API_PATH } from "../auth/v1/signup";
 export { SIGN_IN_API_PATH } from "../auth/v1/login";
 export { REISSUE_API_PATH } from "../auth/v1/reissue";
 export { LOGOUT_API_PATH } from "../auth/v1/logout";
-export { ME_API_PATH } from "../auth/v1/me";
 
 // API 레이어가 존재하는 엔드포인트는 단일 진실을 위해 그 경로 상수를 재노출합니다.
 export { ADMIN_ROUTES_API_PATH } from "../admin/routes";

@@ -57,8 +57,8 @@ export const setAuthTokenGetter = (
  * 게터 미주입(web)이면 두 처리 모두 건너뛰어 기본 헤더(`Client-Type: WEB`)와
  * 쿠키 인증을 그대로 유지합니다.
  *
- * 재발급(reissue)은 수행하지 않습니다 — AT 만료로 인한 401은 호출 측(콘솔 `RequireAuth`)이
- * 세션 만료로 처리합니다.
+ * 재발급(reissue)은 수행하지 않습니다 — AT 만료로 인한 401/403은 호출 측(콘솔의 queryClient
+ * 전역 에러 핸들러)이 로그인 필요로 보고 SSO 로그인으로 리다이렉트합니다.
  */
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   if (!accessTokenGetter) return config;

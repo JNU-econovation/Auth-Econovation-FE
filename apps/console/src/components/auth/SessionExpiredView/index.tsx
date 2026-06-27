@@ -4,9 +4,10 @@ import { redirectToLogin } from "@/lib/redirectToLogin";
 /**
  * 미인증/세션 만료 안내 화면.
  *
- * 콘솔 접근에는 로그인이 필수이므로(쿠키 세션), 인증 확인(`GET /auth/me`)이 실패하면
- * 콘솔 본문 대신 이 화면을 전체 영역에 표시합니다. "로그인" 버튼은 자체 폼 없이
- * `env.ssoLoginUrl` 기반 SSO 로그인 페이지로 리다이렉트합니다.
+ * 콘솔은 토큰 기반이라 진입을 막지 않고 본문을 렌더하다가, API 요청이 401로 실패하면
+ * (`queryClient` 전역 핸들러 → `authStatus`) `AuthGate`가 본문 대신 이 화면을 전체 영역에
+ * 표시합니다. "로그인" 버튼은 자체 폼 없이 `env.ssoLoginUrl` 기반 SSO 로그인 페이지로
+ * 리다이렉트합니다(자동 이동이 아니라 사용자가 직접 진행).
  */
 const SessionExpiredView = () => (
   <div className="flex min-h-screen items-center justify-center bg-bg-sunken px-4">

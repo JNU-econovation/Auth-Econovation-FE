@@ -7,7 +7,7 @@ import {
   IdChip,
   TableSkeleton,
 } from "@auth-econovation/ui";
-import useAdminClientsQuery from "@/hooks/features/query/querys/useAdminClientsQuery";
+import useSelfClientsQuery from "@/hooks/features/query/querys/useSelfClientsQuery";
 import { resolveApiErrorCode } from "@/lib/resolveApiError";
 import { shortId } from "@/lib/validators";
 
@@ -16,12 +16,12 @@ const TH_CLASS =
 const TD_CLASS = "border-b border-border px-4 py-3 align-middle";
 
 /**
- * 클라이언트 목록 테이블. 목록 조회 API(현재 MSW mock)로 전체 클라이언트를 표시하고
- * 행 클릭 시 상세로 이동합니다. 로딩/에러/빈 상태를 카드 안에서 처리합니다.
+ * 클라이언트 목록 테이블. 셀프 목록 조회 API(`GET /api/v1/clients`)로 본인 소유 클라이언트를
+ * 표시하고 행 클릭 시 상세로 이동합니다. 로딩/에러/빈 상태를 카드 안에서 처리합니다.
  */
 const ClientsTable = () => {
   const navigate = useNavigate();
-  const clientsQuery = useAdminClientsQuery();
+  const clientsQuery = useSelfClientsQuery();
 
   if (clientsQuery.status === "pending") {
     return (
