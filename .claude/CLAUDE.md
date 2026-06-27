@@ -15,4 +15,4 @@ OAuth2.0 Provider와 유사한 방식으로 동작하며, 사용자가 한 번 �
 console 워크스페이스에 대한 api관련 정보가 필요하다면 `context/api-docs/console/index.md` 를 확인하세요
 web 워크스페이스에 대한 api관련 정보가 필요하다면 `context/api-docs/auth/index.md` 를 확인하세요
 
-**Vercel 배포를 다루거나 배포 작업을 할 때는 먼저 `context/deploy/index.md`를 확인하세요.** 5개 Vercel 프로젝트(web·console의 dev/prod, docs)의 대표 도메인·환경변수·빌드 설정·Production 브랜치가 정리되어 있으며, 프로젝트별 상세는 `context/deploy/<프로젝트명>.md`에 있습니다.
+**Vercel 배포를 다루거나 배포 작업을 할 때는 먼저 `context/deploy/index.md`를 확인하세요.** 6개 Vercel 프로젝트(web·console·docs의 dev/prod)의 대표 도메인·환경변수·빌드 설정·Production 브랜치가 정리되어 있으며, 프로젝트별 상세는 `context/deploy/<프로젝트명>.md`에 있습니다.
