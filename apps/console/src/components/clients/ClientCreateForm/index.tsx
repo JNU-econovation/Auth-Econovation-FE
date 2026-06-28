@@ -48,7 +48,8 @@ const validateUri = (
 ): { error: string | null; warn: string | null } => {
   const trimmed = value.trim();
   if (trimmed === "") return { error: null, warn: null };
-  if (!isValidUrl(trimmed)) return { error: "URL 형식이 아닙니다.", warn: null };
+  if (!isValidUrl(trimmed))
+    return { error: "URL 형식이 아닙니다.", warn: null };
   if (!trimmed.startsWith("https://"))
     return { error: null, warn: "https:// 사용을 권장합니다." };
   return { error: null, warn: null };
@@ -199,15 +200,35 @@ const ClientCreateForm = () => {
 
             {/* redirect URI 리스트 */}
             <div className="mb-4">
-              <span className="mb-2 block text-sm font-medium">
-                Redirect URI<span className="ml-0.5 text-danger">*</span>
-              </span>
+              <div className="flex gap-1">
+                <span className="mb-2 block text-sm font-medium">
+                  Redirect URI
+                </span>
+                <InfoHint label="upstreamUrl 설명">
+                  <strong className="mb-1 block">Redirect URI</strong>
+                  SSO 로그인 후 리다이랙트 될 URI입니다. 로그인 후 리다이랙트될
+                  URI를 입력해주세요.
+                  <br />
+                  여러분의 프론트엔드 서비스 주소 중 로그인을 처리하는 URI를
+                  입력하세요
+                  <br />
+                  <br />
+                  <strong className="mb-1 block">TIP!</strong>
+                  - 만약 APP 으로 사용한다면 로그인을 처리할 수 있는 페이지를
+                  구현해 해당 주소를 입력하세요.
+                  <br />- 만약 WEB 으로 사용한다면 쿠키를 사용하므로, 프론트엔드
+                  첫 페이지 주소를 입력하세요.
+                </InfoHint>
+              </div>
               <div className="flex flex-col gap-2">
                 {uris.map((row) => (
                   <div key={row.id}>
                     <div className="flex items-start gap-2">
                       <input
-                        className={inputClass({ mono: true, error: !!row.error })}
+                        className={inputClass({
+                          mono: true,
+                          error: !!row.error,
+                        })}
                         placeholder="https://app.example.com/oauth/callback"
                         value={row.value}
                         onChange={(e) =>
@@ -230,9 +251,13 @@ const ClientCreateForm = () => {
                       ) : null}
                     </div>
                     {row.error ? (
-                      <div className="mt-2 text-xs text-danger">{row.error}</div>
+                      <div className="mt-2 text-xs text-danger">
+                        {row.error}
+                      </div>
                     ) : row.warn ? (
-                      <div className="mt-2 text-xs text-warning">{row.warn}</div>
+                      <div className="mt-2 text-xs text-warning">
+                        {row.warn}
+                      </div>
                     ) : null}
                   </div>
                 ))}
@@ -256,9 +281,17 @@ const ClientCreateForm = () => {
                 pathPrefix
                 <InfoHint label="pathPrefix 설명">
                   <strong className="mb-1 block">pathPrefix</strong>
-                  게이트웨이가 이 서비스로 요청을 라우팅할 때 사용하는 경로
-                  접두사입니다. <code>/api/{"{namespace}"}</code> 형태로 시작하는
-                  요청을 이 클라이언트로 전달합니다.
+                  해당 값은 입력한 접두사의 주소로 보내지는 모든 요청을
+                  upstreamUrl로 전달합니다. 해당 서비스만의 접두사를
+                  등록해주세요!
+                  <br /> <br />
+                  e.g.) api를 접두사로 등록했다면 게이트웨이로 오는 /api/hello
+                  요청은 [upstreamUrl]/hello로 전달됩니다.
+                  <br />
+                  <br />
+                  <strong className="mb-1 block">게이트웨이란?</strong>
+                  EEOS가 제공하는 인증 서버입니다. 서비스에서 사용하는 모든
+                  요청은 게이트웨이를 거치도록 하여 인증해야합니다
                 </InfoHint>
               </label>
               <input
@@ -287,6 +320,8 @@ const ClientCreateForm = () => {
                   <strong className="mb-1 block">upstreamUrl</strong>
                   요청이 실제로 전달되는 서비스(오리진) 주소입니다. 게이트웨이가
                   받은 요청을 이 URL로 프록시해 전달합니다.
+                  <br />
+                  여러분의 백엔드 서비스 주소를 입력해주세요.
                 </InfoHint>
               </label>
               <input
@@ -312,8 +347,8 @@ const ClientCreateForm = () => {
             {/* 안내 배너 */}
             <div className="my-6">
               <Banner kind="warning">
-                새 환경 배포 전에 URI를 미리 등록해 두세요. 등록되지 않은 URI로의
-                로그인은 차단됩니다.
+                새 환경 배포 전에 URI를 미리 등록해 두세요. 등록되지 않은
+                URI로의 로그인은 차단됩니다.
               </Banner>
             </div>
 
@@ -366,9 +401,7 @@ const ClientCreateForm = () => {
           </div>
           {created.routeId ? (
             <div className="flex flex-col gap-1">
-              <span className="text-xs text-ink-soft">
-                게이트웨이 라우트
-              </span>
+              <span className="text-xs text-ink-soft">게이트웨이 라우트</span>
               <IdChip value={created.pathPrefix ?? ""} copy={false} />
               <IdChip value={created.upstreamUrl ?? ""} copy={false} />
             </div>
