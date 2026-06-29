@@ -1,0 +1,47 @@
+<svg width="880" height="640" viewBox="0 0 880 640" fill="none" xmlns="http://www.w3.org/2000/svg" font-family="&#39;Pretendard&#39;, -apple-system, &#39;Apple SD Gothic Neo&#39;, sans-serif">
+  <rect width="880" height="640" fill="#F4F6FA"></rect>
+  <rect x="40" y="32" width="800" height="576" rx="16" fill="#FFFFFF" stroke="#D4D7E3"></rect>
+  <path d="M40 48 a16 16 0 0 1 16 -16 H824 a16 16 0 0 1 16 16 V72 H40 Z" fill="#F7FBFF" stroke="#D4D7E3"></path>
+  <circle cx="68" cy="52" r="5" fill="#E0635A"></circle><circle cx="86" cy="52" r="5" fill="#E8B84B"></circle><circle cx="104" cy="52" r="5" fill="#4FB477"></circle>
+  <rect x="150" y="44" width="430" height="16" rx="8" fill="#EDEFF4"></rect>
+  <text x="166" y="56" font-size="11" fill="#959CB6" font-family="monospace">sso.econovation.kr / clients / new</text>
+
+  
+  <text x="80" y="116" font-size="22" font-weight="700" fill="#0C1421">클라이언트 등록</text>
+  <circle cx="262" cy="110" r="9" fill="#EAF0FF"></circle><text x="262" y="114" font-size="11" font-weight="700" fill="#2D6EFF" text-anchor="middle">i</text>
+  <text x="80" y="140" font-size="13" fill="#5D6580">SSO에 연동할 서비스를 등록하고 clientId를 발급받습니다.</text>
+
+  
+  <rect x="80" y="160" width="640" height="404" rx="12" fill="#FFFFFF" stroke="#D4D7E3"></rect>
+
+  
+  <text x="104" y="196" font-size="13" font-weight="600" fill="#0C1421">클라이언트 이름 <tspan fill="#E0635A">*</tspan></text>
+  <rect x="104" y="206" width="592" height="40" rx="9" fill="#F7FBFF" stroke="#D4D7E3"></rect>
+  <text x="118" y="231" font-size="13" fill="#0C1421" font-family="monospace">EEOS</text>
+
+  
+  <text x="104" y="280" font-size="13" font-weight="600" fill="#0C1421">Redirect URI <tspan fill="#E0635A">*</tspan></text>
+  <rect x="104" y="290" width="592" height="38" rx="9" fill="#F7FBFF" stroke="#D4D7E3"></rect>
+  <text x="118" y="314" font-size="12" fill="#0C1421" font-family="monospace">https://eeos.econo.com/auth/callback</text>
+  <text x="104" y="352" font-size="13" font-weight="600" fill="#2D6EFF">＋ URI 추가</text>
+
+  
+  <text x="104" y="392" font-size="13" font-weight="600" fill="#0C1421">pathPrefix <tspan fill="#959CB6" font-weight="400">(선택)</tspan></text>
+  <rect x="104" y="402" width="288" height="38" rx="9" fill="#F7FBFF" stroke="#D4D7E3"></rect>
+  <text x="118" y="426" font-size="12" fill="#0C1421" font-family="monospace">/eeos</text>
+
+  
+  <text x="408" y="392" font-size="13" font-weight="600" fill="#0C1421">upstreamUrl <tspan fill="#959CB6" font-weight="400">(선택)</tspan></text>
+  <rect x="408" y="402" width="288" height="38" rx="9" fill="#F7FBFF" stroke="#D4D7E3"></rect>
+  <text x="422" y="426" font-size="12" fill="#0C1421" font-family="monospace">https://eeos.econo.com</text>
+
+  
+  <rect x="104" y="462" width="592" height="42" rx="9" fill="#FFF7E6" stroke="#F0D89B"></rect>
+  <text x="120" y="488" font-size="12.5" fill="#8A6D1F">⚠ 등록되지 않은 URI로의 로그인은 차단됩니다. 환경별 URI를 미리 등록하세요.</text>
+
+  
+  <rect x="498" y="520" width="80" height="40" rx="10" fill="#FFFFFF" stroke="#D4D7E3"></rect>
+  <text x="538" y="545" font-size="14" fill="#5D6580" text-anchor="middle">취소</text>
+  <rect x="588" y="520" width="108" height="40" rx="10" fill="#162D3A"></rect>
+  <text x="642" y="545" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">클라이언트 등록</text>
+</svg>

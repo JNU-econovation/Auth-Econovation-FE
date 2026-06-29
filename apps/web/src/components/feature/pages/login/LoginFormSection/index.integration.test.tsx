@@ -34,6 +34,18 @@ const APP_LOGIN_SUCCESS = {
 vi.mock("@/lib/redirectToClient", () => ({ redirectToClient: vi.fn() }));
 
 /**
+ * 회원가입 진입 허용 여부는 `@/env`의 `enableSignUp`(VITE_ENABLE_SIGN_UP)로 제어합니다.
+ * 테스트에서 값을 토글할 수 있도록 모듈을 목으로 대체합니다(기본값: 허용).
+ */
+const mockEnv = vi.hoisted(() => ({
+  isDev: true,
+  devClientId: "",
+  devClientType: "web",
+  enableSignUp: true,
+}));
+vi.mock("@/env", () => ({ env: mockEnv }));
+
+/**
  * LoginFormSection 통합 테스트.
  *
  * 폼 입력 → useSignIn 뮤테이션 → MSW로 모킹된 `POST /api/v1/auth/login` 응답까지의
@@ -49,6 +61,25 @@ const CLIENT_ID = "a1b2c3d4-1234-5678-9abc-def012345678";
 describe("LoginFormSection 통합 테스트", () => {
   beforeEach(() => {
     vi.mocked(redirectToClient).mockClear();
+    mockEnv.enableSignUp = true;
+  });
+
+  it("기본적으로 회원가입 링크를 노출한다", () => {
+    renderWithProviders(<LoginFormSection />, { route: "/" });
+
+    expect(
+      screen.getByRole("link", { name: "회원가입하기" }),
+    ).toBeInTheDocument();
+  });
+
+  it("VITE_ENABLE_SIGN_UP이 false면 회원가입 링크를 숨겨 이동을 막는다", () => {
+    mockEnv.enableSignUp = false;
+
+    renderWithProviders(<LoginFormSection />, { route: "/" });
+
+    expect(
+      screen.queryByRole("link", { name: "회원가입하기" }),
+    ).not.toBeInTheDocument();
   });
 
   it("아이디를 비우고 제출하면 검증 에러를 보여주고 API를 호출하지 않는다", async () => {

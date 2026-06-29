@@ -15,4 +15,9 @@ export const env = {
   devClientId: import.meta.env.VITE_DEV_CLIENT_ID ?? "",
   /** 개발용 client-type(쿼리 값, 소문자). 미설정 시 "web". */
   devClientType: import.meta.env.VITE_DEV_CLIENT_TYPE ?? "web",
+  /**
+   * 회원가입 진입 허용 여부(`.env`의 VITE_ENABLE_SIGN_UP). "false"면 로그인 화면의
+   * 회원가입 링크를 숨겨 회원가입 페이지로의 이동을 막습니다. 미설정 시 허용(true).
+   */
+  enableSignUp: import.meta.env.VITE_ENABLE_SIGN_UP !== "false",
 } as const;

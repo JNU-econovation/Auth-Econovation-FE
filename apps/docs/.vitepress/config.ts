@@ -34,6 +34,10 @@ export default defineConfig({
             { text: "SSO 동작 들여다보기", link: "/developers/sso-integration" },
             { text: "API Gateway 동작 원리", link: "/developers/gateway" },
             {
+              text: "클라이언트 등록 가이드",
+              link: "/developers/client-registration",
+            },
+            {
               text: "econo-passport 사용 가이드",
               link: "/developers/econo-passport",
             },

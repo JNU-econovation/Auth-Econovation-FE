@@ -5,7 +5,7 @@ description: 두 단계로 끝내는 SSO 연동 — client-id로 로그인 페�
 
 # Quick Start
 
-가장 단순한 웹 서비스 연동은 두 단계입니다. 먼저 [클라이언트 등록](https://console-auth-econovation-fe.vercel.app/)을 통해 `client-id`와 콜백(리다이렉트) URL을 발급받았다고 가정합니다.
+가장 단순한 웹 서비스 연동은 두 단계입니다. 먼저 [클라이언트 등록 가이드](./client-registration)를 따라 `client-id`와 콜백(리다이렉트) URL을 발급받았다고 가정합니다.
 
 > 이 SSO는 별도의 _authorization code 교환_ 단계가 없는 **직접 토큰 발급** 방식입니다. 사용자가 SSO 페이지에서 로그인하면 서버가 토큰(WEB은 쿠키 / APP은 리다이렉트 쿼리)과 함께, `client-id`에 매핑된 콜백 URL(`redirectUrl`)로 사용자를 돌려보냅니다. 내 서비스가 직접 토큰 교환 요청을 보내는 단계는 없습니다.
 
