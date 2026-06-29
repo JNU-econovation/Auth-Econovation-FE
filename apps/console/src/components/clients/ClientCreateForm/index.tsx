@@ -202,7 +202,7 @@ const ClientCreateForm = () => {
             <div className="mb-4">
               <div className="flex gap-1">
                 <span className="mb-2 block text-sm font-medium">
-                  Redirect URI
+                  Redirect URI<span className="ml-0.5 text-danger">*</span>
                 </span>
                 <InfoHint label="upstreamUrl 설명">
                   <strong className="mb-1 block">Redirect URI</strong>
