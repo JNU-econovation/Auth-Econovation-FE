@@ -33,6 +33,10 @@ export default defineConfig({
             { text: "Quick Start", link: "/developers/quick-start" },
             { text: "SSO 동작 들여다보기", link: "/developers/sso-integration" },
             { text: "API Gateway 동작 원리", link: "/developers/gateway" },
+            {
+              text: "econo-passport 사용 가이드",
+              link: "/developers/econo-passport",
+            },
             { text: "클라이언트 예시", link: "/developers/client-examples" },
             { text: "API 명세", link: "/developers/api-reference" },
             { text: "FAQ / 트러블슈팅", link: "/developers/faq" },

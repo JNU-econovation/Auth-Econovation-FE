@@ -7,11 +7,11 @@ description: SSO 웹·콘솔·문서 사이트의 Vercel 프로젝트 구성 (Bu
 
 본 레포는 **하나의 Git 저장소(Bun workspaces 모노레포)** 에 세 개의 배포 가능한 산출물을 가지고 있습니다.
 
-| 배포 대상 | Root Directory | Framework | Output | rewrite |
-| --- | --- | --- | --- | --- |
-| SSO 웹 (메인 앱) | `apps/web` | Vite | `apps/web/dist` | **SPA `/(.*)→/`** |
-| 어드민/개발자 콘솔 | `apps/console` | Vite | `apps/console/dist` | **SPA `/(.*)→/`** |
-| 공식 문서 사이트 | `apps/docs` | Other(VitePress) | `apps/docs/.vitepress/dist` | 없음 |
+| 배포 대상          | Root Directory | Framework        | Output                      | rewrite           |
+| ------------------ | -------------- | ---------------- | --------------------------- | ----------------- |
+| SSO 웹 (메인 앱)   | `apps/web`     | Vite             | `apps/web/dist`             | **SPA `/(.*)→/`** |
+| 어드민/개발자 콘솔 | `apps/console` | Vite             | `apps/console/dist`         | **SPA `/(.*)→/`** |
+| 공식 문서 사이트   | `apps/docs`    | Other(VitePress) | `apps/docs/.vitepress/dist` | 없음              |
 
 > 세 산출물은 **각각 별도의 Vercel 프로젝트**로 배포합니다. React 앱(web·console)의 SPA fallback rewrite를 docs와 공유하면 문서 경로가 모두 진입점으로 흡수됩니다.
 
@@ -25,21 +25,21 @@ description: SSO 웹·콘솔·문서 사이트의 Vercel 프로젝트 구성 (Bu
 
 ## 공통 Vercel 설정 (web·console·docs)
 
-| 항목 | 값 |
-| --- | --- |
-| Install Command | `bun install` (루트 통합 `bun.lockb`) |
+| 항목                                               | 값                                                  |
+| -------------------------------------------------- | --------------------------------------------------- |
+| Install Command                                    | `bun install` (루트 통합 `bun.lockb`)               |
 | Include source files outside of the Root Directory | **활성화** (web·console은 `packages/*` 접근에 필수) |
 
 ## 1) SSO 웹 (메인 앱)
 
-| 항목 | 값 |
-| --- | --- |
-| Framework Preset | Vite |
-| **Root Directory** | **`apps/web`** |
-| Build Command | `bun run build` (= `vite build`) |
-| Output Directory | `dist` (= `apps/web/dist`) |
+| 항목                  | 값                                                                                                                                    |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework Preset      | Vite                                                                                                                                  |
+| **Root Directory**    | **`apps/web`**                                                                                                                        |
+| Build Command         | `bun run build` (= `vite build`)                                                                                                      |
+| Output Directory      | `dist` (= `apps/web/dist`)                                                                                                            |
 | Environment Variables | `VITE_API_URL` **(필수)** · `VITE_ENABLE_MSW`=`false`/미설정 (dev 전용 `VITE_DEV_CLIENT_ID`·`VITE_DEV_CLIENT_TYPE`는 프로덕션 불필요) |
-| SPA Fallback | `apps/web/vercel.json` |
+| SPA Fallback          | `apps/web/vercel.json`                                                                                                                |
 
 `apps/web/vercel.json`:
 
@@ -53,26 +53,26 @@ description: SSO 웹·콘솔·문서 사이트의 Vercel 프로젝트 구성 (Bu
 
 ## 2) 어드민/개발자 콘솔
 
-| 항목 | 값 |
-| --- | --- |
-| Framework Preset | Vite |
-| **Root Directory** | **`apps/console`** |
-| Build Command | `bun run build` (= `vite build`) |
-| Output Directory | `dist` (= `apps/console/dist`) |
+| 항목                  | 값                                                                                                                |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Framework Preset      | Vite                                                                                                              |
+| **Root Directory**    | **`apps/console`**                                                                                                |
+| Build Command         | `bun run build` (= `vite build`)                                                                                  |
+| Output Directory      | `dist` (= `apps/console/dist`)                                                                                    |
 | Environment Variables | `VITE_API_URL` **(필수, 어드민 엔드포인트)** · `VITE_SSO_LOGIN_URL` **(필수)** · `VITE_ENABLE_MSW`=`false`/미설정 |
-| SPA Fallback | `apps/console/vercel.json` |
+| SPA Fallback          | `apps/console/vercel.json`                                                                                        |
 
-> 콘솔 도메인(예: `console.auth.econovation.kr`)과 인증 방식(SSO 세션 재사용 vs 전용 게이트)은 *(TBD: 운영자 확정)*. 현재 가드는 개발(MSW) 역할 전환 기반이며, 프로덕션은 **세션 쿠키 기반 권한 검증**(미인증 시 SSO 로그인으로 리다이렉트)으로 대체해야 합니다. 또한 콘솔의 "클라이언트 목록" 전용 엔드포인트는 백엔드 계약에 없어 단건 조회 기반으로 동작합니다 *(TBD: 목록 엔드포인트 백엔드 협의)*.
+> 콘솔 도메인(예: `console.auth.econovation.kr`)과 인증 방식(SSO 세션 재사용 vs 전용 게이트)은 _(TBD: 운영자 확정)_. 현재 가드는 개발(MSW) 역할 전환 기반이며, 프로덕션은 **세션 쿠키 기반 권한 검증**(미인증 시 SSO 로그인으로 리다이렉트)으로 대체해야 합니다. 또한 콘솔의 "클라이언트 목록" 전용 엔드포인트는 백엔드 계약에 없어 단건 조회 기반으로 동작합니다 _(TBD: 목록 엔드포인트 백엔드 협의)_.
 
 ## 3) 공식 문서 사이트
 
-| 항목 | 값 |
-| --- | --- |
-| Framework Preset | Other (또는 VitePress) |
-| **Root Directory** | **`apps/docs`** |
-| Build Command | `bun run build` (= `vitepress build`) |
-| Output Directory | `.vitepress/dist` |
-| Environment Variables | 없음 |
+| 항목                  | 값                                    |
+| --------------------- | ------------------------------------- |
+| Framework Preset      | Other (또는 VitePress)                |
+| **Root Directory**    | **`apps/docs`**                       |
+| Build Command         | `bun run build` (= `vitepress build`) |
+| Output Directory      | `.vitepress/dist`                     |
+| Environment Variables | 없음                                  |
 
 ## Vercel 프로젝트 생성 절차 (앱 공통)
 
