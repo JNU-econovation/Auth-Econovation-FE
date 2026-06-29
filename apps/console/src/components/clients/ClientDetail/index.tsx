@@ -7,11 +7,13 @@ import {
   CardHeader,
   EmptyState,
   IdChip,
+  InfoHint,
   Skeleton,
   useToast,
 } from "@auth-econovation/ui";
 import useSelfClientQuery from "@/hooks/features/query/querys/useSelfClientQuery";
 import ReplaceUrisModal from "@/components/clients/ReplaceUrisModal";
+import EditGatewayModal from "@/components/clients/EditGatewayModal";
 
 const PAGE_CLASS = "w-full max-w-[1144px] p-8";
 
@@ -20,9 +22,10 @@ interface ClientDetailProps {
 }
 
 /**
- * 클라이언트 상세 + redirect URI 관리. 기본 정보(clientId)와 URI 목록을 보여주고,
- * URI 편집은 "수정하기"(전체 교체 + diff) 흐름 하나로 일원화합니다. redirect URI를 교체할 때는
- * 연결된 Gateway 라우트가 유지되도록 현재 clientName·route를 함께 전송합니다.
+ * 클라이언트 상세 화면. 기본 정보(clientId)·게이트웨이 설정(pathPrefix·upstreamUrl)·
+ * redirect URI 목록을 보여주고, 게이트웨이 설정과 URI를 각각 "수정하기" 모달로 편집합니다.
+ * 셀프 클라이언트 수정은 전체 표현 교체(`PUT`)이므로, 한 영역만 바꿔도 나머지(clientName·
+ * redirectUris·route)를 함께 전송해 의도치 않은 변경/라우트 삭제를 막습니다.
  */
 const ClientDetail = ({ clientId }: ClientDetailProps) => {
   const navigate = useNavigate();
@@ -30,6 +33,7 @@ const ClientDetail = ({ clientId }: ClientDetailProps) => {
   const clientQuery = useSelfClientQuery({ clientId });
 
   const [replacing, setReplacing] = useState(false);
+  const [editingGateway, setEditingGateway] = useState(false);
 
   if (clientQuery.status === "pending") {
     return (
@@ -100,6 +104,62 @@ const ClientDetail = ({ clientId }: ClientDetailProps) => {
           </CardBody>
         </Card>
 
+        {/* 게이트웨이 설정 */}
+        <Card>
+          <CardHeader
+            actions={
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setEditingGateway(true)}
+              >
+                수정하기
+              </Button>
+            }
+          >
+            게이트웨이 설정
+          </CardHeader>
+          <CardBody className="space-y-4">
+            <div className="flex items-center gap-4">
+              <span className="flex w-[104px] flex-none items-center gap-1 text-xs text-ink-soft">
+                pathPrefix
+                <InfoHint label="pathPrefix 설명">
+                  <strong className="mb-1 block">pathPrefix</strong>
+                  게이트웨이가 이 서비스로 요청을 라우팅할 때 사용하는 경로
+                  접두사입니다. 예: <code>/api/econo-spa</code>로 시작하는 요청을
+                  이 클라이언트로 전달합니다.
+                </InfoHint>
+              </span>
+              {client.route ? (
+                <IdChip
+                  value={client.route.pathPrefix}
+                  className="min-w-0 flex-1"
+                />
+              ) : (
+                <span className="text-sm text-ink-soft">미설정</span>
+              )}
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="flex w-[104px] flex-none items-center gap-1 text-xs text-ink-soft">
+                upstreamUrl
+                <InfoHint label="upstreamUrl 설명">
+                  <strong className="mb-1 block">upstreamUrl</strong>
+                  요청이 실제로 전달되는 서비스(오리진) 주소입니다. 게이트웨이가
+                  받은 요청을 이 URL로 프록시해 전달합니다.
+                </InfoHint>
+              </span>
+              {client.route ? (
+                <IdChip
+                  value={client.route.upstreamUrl}
+                  className="min-w-0 flex-1"
+                />
+              ) : (
+                <span className="text-sm text-ink-soft">미설정</span>
+              )}
+            </div>
+          </CardBody>
+        </Card>
+
         {/* Redirect URI 관리 */}
         <Card>
           <CardHeader
@@ -144,6 +204,20 @@ const ClientDetail = ({ clientId }: ClientDetailProps) => {
           onReplaced={() => {
             setReplacing(false);
             toast("success", "redirect URI 목록을 교체했습니다.");
+          }}
+        />
+      ) : null}
+
+      {editingGateway ? (
+        <EditGatewayModal
+          clientId={clientId}
+          clientName={client.clientName}
+          redirectUris={client.redirectUris}
+          route={client.route}
+          onClose={() => setEditingGateway(false)}
+          onSaved={() => {
+            setEditingGateway(false);
+            toast("success", "게이트웨이 설정을 저장했습니다.");
           }}
         />
       ) : null}
