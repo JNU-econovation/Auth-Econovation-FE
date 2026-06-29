@@ -1,5 +1,8 @@
+import { useState } from "react";
 import { NavLink, Outlet } from "react-router";
-import { Button, GridIcon, LogoMark } from "@auth-econovation/ui";
+import { Button, GridIcon, InfoIcon, LogoMark } from "@auth-econovation/ui";
+import { env } from "@/env";
+import { logout } from "@/lib/logout";
 
 const NAV_ITEMS = [
   { to: "/clients", label: "클라이언트", icon: GridIcon },
@@ -11,9 +14,16 @@ const NAV_ITEMS = [
  *
  * ⚠️ 사용자 영역(이름·역할)은 me 엔드포인트 제거로 현재 비어 있습니다.
  *    사용자 정보 조회 수단이 확정되면 이 영역을 다시 채웁니다.
- * ⚠️ 로그아웃은 SSO 로그아웃 흐름이 아직 미확정이라 임시 비활성 상태입니다.
  */
 const ConsoleLayout = () => {
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleLogout = (): void => {
+    // 로그아웃은 SSO 로그인으로 전체 페이지 이동하므로, 진행 중 재클릭만 막으면 됩니다.
+    setLoggingOut(true);
+    void logout();
+  };
+
   return (
     <div className="grid min-h-screen grid-cols-[220px_1fr]">
       <aside className="sticky top-0 flex h-screen flex-col border-r border-border bg-white px-4 py-6">
@@ -51,14 +61,25 @@ const ConsoleLayout = () => {
 
         <div className="flex-1" />
 
+        {/* 공식 문서 — 외부 docs 사이트를 새 탭으로 엽니다(왼쪽 하단). */}
+        <a
+          href={env.docsUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="flex w-full items-center gap-2 rounded-lg px-3 py-[9px] text-left text-sm font-medium text-ink-soft transition hover:bg-bg-sunken hover:text-ink"
+        >
+          <InfoIcon className="h-[15px] w-[15px]" />
+          공식 문서
+        </a>
+
         {/* 사용자 영역 — me 엔드포인트 제거로 현재 비어 있음(사용자 정보 연동 재도입 시 채움) */}
         <div className="border-t border-border px-3 pt-4 pb-1">
           <div className="flex items-center justify-end">
             <Button
               variant="ghost-plain"
               size="sm"
-              disabled
-              title="로그아웃 연동 후 제공됩니다"
+              loading={loggingOut}
+              onClick={handleLogout}
             >
               로그아웃
             </Button>
