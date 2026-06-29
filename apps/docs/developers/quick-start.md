@@ -50,7 +50,7 @@ description: 두 단계로 끝내는 SSO 연동 — client-id로 로그인 페�
 
   <rect x="130" y="402" width="46" height="20" rx="10" fill="#dbeafe" />
   <text x="153" y="416" text-anchor="middle" font-size="11" font-weight="700" fill="#1e40af">WEB</text>
-  <text x="186" y="416" font-size="12" fill="#334155">at / rt 를 HttpOnly 쿠키로 자동 수신</text>
+  <text x="186" y="416" font-size="11" fill="#334155">accessToken / refreshToken을 HttpOnly 쿠키로 자동 수신</text>
 
   <rect x="130" y="430" width="46" height="20" rx="10" fill="#dcfce7" />
   <text x="153" y="444" text-anchor="middle" font-size="11" font-weight="700" fill="#166534">APP</text>
@@ -118,8 +118,6 @@ Access Token/Refresh Token이 HttpOnly 쿠키(`at`/`rt`)로 자동 설정됩니�
 // 필요하면 보호된 리소스를 호출해 로그인 상태만 확인합니다.
 ```
 
-> 쿠키가 콜백 도메인까지 전달되는 범위(쿠키 도메인 스코프)는 SSO 백엔드 설정에 따릅니다. *(TBD: [SSO 동작 들여다보기 — 리다이렉트 메커니즘](./sso-integration#리다이렉트-메커니즘) 참고)*
-
 ### APP — 리다이렉트 쿼리
 
 Access Token/Refresh Token이 콜백 URL의 쿼리 스트링으로 전달됩니다. 콜백을 받는 주체(웹뷰 프론트 또는 백엔드)에서 쿼리를 파싱해 토큰을 보관하세요.
@@ -152,8 +150,40 @@ app.get("/auth/callback", (req, res) => {
 
 > ⚠️ APP 흐름은 토큰이 URL 쿼리에 실려 오므로, 서버 액세스 로그·브라우저 히스토리·`Referer` 헤더에 남을 수 있습니다. 반드시 HTTPS로 받고, 위 예시처럼 토큰을 세션/쿠키로 옮긴 뒤 **토큰이 빠진 URL로 즉시 리다이렉트**하세요.
 
+## 로그인 다음 — 게이트웨이로 API 호출하기
+
+로그인이 끝나면, 발급받은 토큰으로 내 백엔드 API를 호출합니다. 이때 클라이언트는 백엔드 서버 주소를 직접 호출하지 않고, **단일 진입점인 API Gateway(`api.econovation.kr`)** 로 요청을 보냅니다.
+
+게이트웨이는 모든 요청에서 SSO 토큰을 검증(인증)하고 권한을 확인(인가)합니다. 검사를 통과한 요청에만 사용자 신원 정보를 헤더(`X-User-Passport`)로 주입해 upstream 서버로 전달합니다. 덕분에 **내 백엔드 서버는 토큰을 직접 파싱하거나 SSO와 통신할 필요가 없습니다.**
+
+백엔드는 사용자 신원 정보를 헤더(`X-User-Passport`)를 `econo-passport` Spring Boot 공용 라이브러리를 사용하여 사용자 정보를 가져올 수 있습니다.
+[econo-passport 사용 가이드] 를 참고하세요
+
+클라이언트의 요청 경로는 `api.econovation.kr/api/{네임스페이스}/...` 형태입니다. 게이트웨이가 `pathPrefix`(`/api/{네임스페이스}`)로 어느 서비스인지 식별한 뒤, 그 부분을 떼어내고 남은 경로를 내 백엔드(`upstreamUrl`)로 전달합니다.
+
+```typescript
+// WEB: 로그인 시 받은 at/rt 쿠키가 같은 상위 도메인(econovation.kr) 요청에 자동 첨부됩니다.
+const res = await fetch(
+  "https://api.econovation.kr/api/eeos/guest/programs?category=all",
+  {
+    credentials: "include",
+  },
+);
+
+// APP: 보관해 둔 access token을 Authorization 헤더로 전달합니다.
+const res = await fetch(
+  "https://api.econovation.kr/api/eeos/guest/programs?category=all",
+  {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  },
+);
+```
+
+> 위 예시가 동작하려면 먼저 [콘솔](https://console-auth-econovation-fe.vercel.app)에서 내 서비스의 라우트(`pathPrefix` → `upstreamUrl`)를 등록해야 합니다. 라우팅 규칙·경로 재작성·인증·인가 처리 방식과 서비스 등록 절차는 [API Gateway 동작 원리](./gateway) 문서를 참고하세요.
+
 ## 다음으로
 
 - 전체 흐름·검증 규칙·클라이언트 등록은 [SSO 동작 들여다보기](./sso-integration)
+- 게이트웨이 라우팅·서비스 등록은 [API Gateway 동작 원리](./gateway)
 - 콜백 처리 예시는 [클라이언트 예시](./client-examples)
 - 엔드포인트 스펙은 [API 명세](./api-reference)

@@ -37,15 +37,15 @@ src/api/
             └─ index.ts      # POST /api/v1/auth/logout (멱등)
 ```
 
-| 파일 | 엔드포인트 | 비고 |
-| --- | --- | --- |
-| `src/api/auth/v1/login/index.ts` | `POST /api/v1/auth/login` | SSO 페이지가 ID/PW를 백엔드에 제출할 때 사용. `withCredentials: true` |
-| `src/api/auth/v1/signup/index.ts` | `POST /api/v1/auth/signup` | 선택적 `?code=<sso-auth-code>` 쿼리. 성공 시 토큰 미발급 |
-| `src/api/auth/v1/reissue/index.ts` | `POST /api/v1/auth/reissue` | Access Token 만료 시 Refresh Token으로 재발급 |
-| `src/api/auth/v1/logout/index.ts` | `POST /api/v1/auth/logout` | 멱등 |
-| `src/api/auth/types.ts` | - | 요청/응답 타입 및 공통 에러 응답 타입 |
+| 파일                               | 엔드포인트                  | 비고                                                                  |
+| ---------------------------------- | --------------------------- | --------------------------------------------------------------------- |
+| `src/api/auth/v1/login/index.ts`   | `POST /api/v1/auth/login`   | SSO 페이지가 ID/PW를 백엔드에 제출할 때 사용. `withCredentials: true` |
+| `src/api/auth/v1/signup/index.ts`  | `POST /api/v1/auth/signup`  | 선택적 `?code=<sso-auth-code>` 쿼리. 성공 시 토큰 미발급              |
+| `src/api/auth/v1/reissue/index.ts` | `POST /api/v1/auth/reissue` | Access Token 만료 시 Refresh Token으로 재발급                         |
+| `src/api/auth/v1/logout/index.ts`  | `POST /api/v1/auth/logout`  | 멱등                                                                  |
+| `src/api/auth/types.ts`            | -                           | 요청/응답 타입 및 공통 에러 응답 타입                                 |
 
-> **외부 연동에 노출되는 엔드포인트**(`/api/v1/auth/token/exchange`, `/api/v1/auth/token/refresh`)는 SSO 백엔드가 직접 제공하며, 본 프론트엔드 코드에서는 호출하지 않습니다. 자세한 요청·응답 스키마는 [개발자 가이드 — API 명세](../developers/api-reference)를 참조하세요. *(TBD: 해당 엔드포인트 경로/필드명은 백엔드 확정 시 갱신)*
+> **외부 연동에 노출되는 엔드포인트**(`/api/v1/auth/token/exchange`, `/api/v1/auth/token/refresh`)는 SSO 백엔드가 직접 제공하며, 본 프론트엔드 코드에서는 호출하지 않습니다. 자세한 요청·응답 스키마는 [개발자 가이드 — API 명세](../developers/api-reference)를 참조하세요. _(TBD: 해당 엔드포인트 경로/필드명은 백엔드 확정 시 갱신)_
 
 ## 폴더 명명 컨벤션
 
