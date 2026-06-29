@@ -1,0 +1,52 @@
+<svg width="880" height="240" viewBox="0 0 880 240" fill="none" xmlns="http://www.w3.org/2000/svg" font-family="&#39;Pretendard&#39;, -apple-system, &#39;Apple SD Gothic Neo&#39;, sans-serif">
+  <rect width="880" height="240" fill="#F4F6FA"></rect>
+  
+  <g>
+    
+    <rect x="24" y="86" width="142" height="68" rx="12" fill="#FFFFFF" stroke="#D4D7E3"></rect>
+    <circle cx="50" cy="74" r="14" fill="#162D3A"></circle>
+    <text x="50" y="79" font-size="15" font-weight="700" fill="#FFFFFF" text-anchor="middle">1</text>
+    <text x="95" y="116" font-size="16" font-weight="600" fill="#0C1421" text-anchor="middle">SSO 로그인</text>
+    <text x="95" y="137" font-size="12" fill="#5D6580" text-anchor="middle">개발자 콘솔 진입</text>
+
+    
+    <rect x="206" y="86" width="142" height="68" rx="12" fill="#FFFFFF" stroke="#D4D7E3"></rect>
+    <circle cx="232" cy="74" r="14" fill="#162D3A"></circle>
+    <text x="232" y="79" font-size="15" font-weight="700" fill="#FFFFFF" text-anchor="middle">2</text>
+    <text x="277" y="116" font-size="16" font-weight="600" fill="#0C1421" text-anchor="middle">인증 처리</text>
+    <text x="277" y="137" font-size="12" fill="#5D6580" text-anchor="middle">콜백 · 세션 발급</text>
+
+    
+    <rect x="388" y="86" width="142" height="68" rx="12" fill="#FFFFFF" stroke="#D4D7E3"></rect>
+    <circle cx="414" cy="74" r="14" fill="#162D3A"></circle>
+    <text x="414" y="79" font-size="15" font-weight="700" fill="#FFFFFF" text-anchor="middle">3</text>
+    <text x="459" y="116" font-size="16" font-weight="600" fill="#0C1421" text-anchor="middle">클라이언트 목록</text>
+    <text x="459" y="137" font-size="12" fill="#5D6580" text-anchor="middle">＋ 등록 시작</text>
+
+    
+    <rect x="570" y="86" width="142" height="68" rx="12" fill="#FFFFFF" stroke="#2D6EFF" stroke-width="1.6"></rect>
+    <circle cx="596" cy="74" r="14" fill="#2D6EFF"></circle>
+    <text x="596" y="79" font-size="15" font-weight="700" fill="#FFFFFF" text-anchor="middle">4</text>
+    <text x="641" y="116" font-size="16" font-weight="600" fill="#0C1421" text-anchor="middle">등록 폼 입력</text>
+    <text x="641" y="137" font-size="12" fill="#5D6580" text-anchor="middle">이름 · URI · 게이트웨이</text>
+
+    
+    <rect x="752" y="86" width="104" height="68" rx="12" fill="#162D3A"></rect>
+    <circle cx="778" cy="74" r="14" fill="#162D3A" stroke="#F4F6FA" stroke-width="3"></circle>
+    <text x="778" y="79" font-size="15" font-weight="700" fill="#FFFFFF" text-anchor="middle">5</text>
+    <text x="804" y="116" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">clientId</text>
+    <text x="804" y="136" font-size="12" fill="#9DB2C9" text-anchor="middle">발급 완료</text>
+  </g>
+  
+  <g stroke="#959CB6" stroke-width="1.6" fill="none">
+    <path d="M168 120 H204" marker-end="url(#ar)"></path>
+    <path d="M350 120 H386" marker-end="url(#ar)"></path>
+    <path d="M532 120 H568" marker-end="url(#ar)"></path>
+    <path d="M714 120 H750" marker-end="url(#ar)"></path>
+  </g>
+  <defs>
+    <marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0 0 L7 4 L0 8 Z" fill="#959CB6"></path>
+    </marker>
+  </defs>
+</svg>

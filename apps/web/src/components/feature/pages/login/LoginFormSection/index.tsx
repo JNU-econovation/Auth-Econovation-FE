@@ -9,6 +9,7 @@ import {
 } from "@auth-econovation/ui";
 import type { ApiErrorResponse, ClientType } from "@auth-econovation/api";
 import useSignIn from "@/hooks/features/query/mutations/useSignIn";
+import { env } from "@/env";
 import { redirectToClient } from "@/lib/redirectToClient";
 import { getErrorMessageFromCode } from "./errorCodeMap";
 
@@ -120,10 +121,14 @@ function LoginFormSection() {
         fullWidth
         disabled={mutation.isPending}
       />
-      <Spacing size={16} direction="vertical" />
-      <Link to="/sign-in" className="flex justify-center">
-        <Text size="7">회원가입하기</Text>
-      </Link>
+      {env.enableSignUp && (
+        <>
+          <Spacing size={16} direction="vertical" />
+          <Link to="/sign-in" className="flex justify-center">
+            <Text size="7">회원가입하기</Text>
+          </Link>
+        </>
+      )}
     </form>
   );
 }

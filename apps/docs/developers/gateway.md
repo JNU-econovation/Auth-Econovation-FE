@@ -76,9 +76,9 @@ description: 에코노베이션 API Gateway가 요청을 라우팅하고 인증�
 
 ## 서비스 등록하기
 
-자세한 내용은 [Quick Start](./quick-start) 문서를 확인해주세요!
+자세한 내용은 [Quick Start](./quick-start), [클라이언트 등록 가이드](./client-registration.md) 문서를 확인해주세요!
 
-[콘솔 페이지](https://console-auth-econovation-fe.vercel.app)에서 등록이 가능합니다.
+등록은 [콘솔 페이지](https://console-auth-econovation-fe.vercel.app)에서 가능합니다.
 
 ## 자주 묻는 질문
 
