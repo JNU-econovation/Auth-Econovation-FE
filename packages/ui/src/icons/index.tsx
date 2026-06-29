@@ -75,3 +75,11 @@ export const InfoIcon = (props: IconProps) => (
     <path d="M12 8h.01" />
   </svg>
 );
+
+// 펼친 책 — "공식 문서" 등 문서/가이드 링크에 사용.
+export const BookIcon = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 0 3-3h7z" />
+  </svg>
+);

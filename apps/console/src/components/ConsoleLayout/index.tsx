@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, Outlet } from "react-router";
-import { Button, GridIcon, InfoIcon, LogoMark } from "@auth-econovation/ui";
+import { BookIcon, Button, GridIcon, LogoMark } from "@auth-econovation/ui";
 import { env } from "@/env";
 import { logout } from "@/lib/logout";
 
@@ -61,14 +61,14 @@ const ConsoleLayout = () => {
 
         <div className="flex-1" />
 
-        {/* 공식 문서 — 외부 docs 사이트를 새 탭으로 엽니다(왼쪽 하단). */}
+        {/* 공식 문서 — nav 항목과 동일한 스타일의 외부 링크(새 탭). 좌측 하단. */}
         <a
           href={env.docsUrl}
           target="_blank"
           rel="noreferrer"
           className="flex w-full items-center gap-2 rounded-lg px-3 py-[9px] text-left text-sm font-medium text-ink-soft transition hover:bg-bg-sunken hover:text-ink"
         >
-          <InfoIcon className="h-[15px] w-[15px]" />
+          <BookIcon className="h-[15px] w-[15px]" />
           공식 문서
         </a>
 

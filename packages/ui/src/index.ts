@@ -42,6 +42,7 @@ export {
   UsersIcon,
   GridIcon,
   InfoIcon,
+  BookIcon,
 } from "./icons";
 
 // 레이아웃
