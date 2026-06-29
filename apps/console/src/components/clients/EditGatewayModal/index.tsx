@@ -6,7 +6,7 @@ import {
   resolveApiErrorCode,
   resolveApiErrorMessage,
 } from "@/lib/resolveApiError";
-import { isValidNamespacePrefix, isValidUrl } from "@/lib/validators";
+import { isValidUrl } from "@/lib/validators";
 import { inputClass } from "@/lib/inputClass";
 
 interface EditGatewayModalProps {
@@ -60,13 +60,14 @@ const EditGatewayModal = ({
   // 기존 라우트가 있는데 둘 다 비우면 라우트 삭제(게이트웨이 프록시 중단)
   const destructive = route !== null && !path && !upstream;
 
-  /** pathPrefix·upstreamUrl은 "둘 다 입력 또는 둘 다 비움"만 허용합니다. */
+  /**
+   * pathPrefix·upstreamUrl은 "둘 다 입력 또는 둘 다 비움"만 허용합니다.
+   * pathPrefix 네임스페이스 형식은 서버가 검증(ROUTE_NAMESPACE_INVALID)합니다.
+   */
   const validate = (): string | null => {
     if (!path && !upstream) return null;
     if (!path || !upstream)
       return "pathPrefix와 upstreamUrl은 함께 입력해야 합니다.";
-    if (!isValidNamespacePrefix(path))
-      return "pathPrefix는 /api/{namespace} 형태여야 합니다.";
     if (!isValidUrl(upstream))
       return "upstreamUrl이 올바른 URL 형식이 아닙니다.";
     return null;

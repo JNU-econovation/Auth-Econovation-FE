@@ -18,9 +18,5 @@ export const isValidUrl = (value: string): boolean => {
   }
 };
 
-/** pathPrefix가 `/api/{namespace}` 형태인지(서버 라우트 검증 규칙과 정렬). */
-export const isValidNamespacePrefix = (value: string): boolean =>
-  /^\/api\/[A-Za-z0-9._~-]+(\/.*)?$/.test(value);
-
 /** 식별자를 앞 8자 + 말줄임(…)으로 축약합니다. 테이블 등 좁은 영역 표시용. */
 export const shortId = (id: string): string => `${id.slice(0, 8)}…`;
