@@ -26,10 +26,6 @@ interface UriRow {
   warn: string | null;
 }
 
-/** pathPrefix가 `/api/{namespace}` 형태인지(서버 검증 규칙과 정렬). */
-const isValidNamespacePrefix = (value: string): boolean =>
-  /^\/api\/[A-Za-z0-9._~-]+(\/.*)?$/.test(value);
-
 /** 서버가 라우트 필드 단위로 내려주는 에러 코드(필드 하단에 메시지 표시). */
 const ROUTE_ERROR_CODES = new Set([
   "ROUTE_NAMESPACE_INVALID",
@@ -90,15 +86,16 @@ const ClientCreateForm = () => {
       rows.length > 1 ? rows.filter((r) => r.id !== id) : rows,
     );
 
-  /** pathPrefix·upstreamUrl은 "둘 다 입력 또는 둘 다 비움"만 허용합니다. */
+  /**
+   * pathPrefix·upstreamUrl은 "둘 다 입력 또는 둘 다 비움"만 허용합니다.
+   * pathPrefix 네임스페이스 형식은 서버가 검증(ROUTE_NAMESPACE_INVALID)합니다.
+   */
   const validateRoute = (): string | null => {
     const path = pathPrefix.trim();
     const upstream = upstreamUrl.trim();
     if (!path && !upstream) return null;
     if (!path || !upstream)
       return "pathPrefix와 upstreamUrl은 함께 입력해야 합니다.";
-    if (!isValidNamespacePrefix(path))
-      return "pathPrefix는 /api/{namespace} 형태여야 합니다.";
     if (!isValidUrl(upstream))
       return "upstreamUrl이 올바른 URL 형식이 아닙니다.";
     return null;
