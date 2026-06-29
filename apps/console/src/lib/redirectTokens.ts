@@ -76,6 +76,18 @@ export function storeRedirectTokens(tokens: RedirectTokens): void {
 }
 
 /**
+ * @description localStorage에 보관된 APP 토큰을 모두 제거합니다(로그아웃 시 사용).
+ *
+ * 콘솔은 APP 흐름이라 서버 로그아웃(`logoutApi`)이 토큰을 만료시키지 않으므로, 보관 중인
+ * AT/RT/만료시각을 호출 측이 직접 삭제해야 합니다(`storeRedirectTokens`의 역연산).
+ */
+export function clearStoredTokens(): void {
+  localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+  localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY);
+  localStorage.removeItem(ACCESS_EXPIRED_TIME_STORAGE_KEY);
+}
+
+/**
  * @description 앱 진입 시 URL 쿼리의 APP 리다이렉트 토큰을 localStorage로 옮기고 URL에서 제거합니다.
  *
  * 콘솔이 APP 리다이렉트 대상(`/?accessToken=...&refreshToken=...&accessExpiredTime=...`)으로
